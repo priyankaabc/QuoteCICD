@@ -1,9 +1,0 @@
-﻿@model object
-
-@(
- Html.Kendo().ComboBoxFor(m => m)
- .Placeholder(CommonHelper.PleaseSelect)
- .Filter(FilterType.Contains)
-        .BindTo((SelectList)ViewData[ViewData.TemplateInfo.GetFullHtmlFieldName("") + "_Data"]))
-
-
