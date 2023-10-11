@@ -1,0 +1,163 @@
+﻿@using QuoteCalculator.Common
+<!DOCTYPE html>
+<html>
+<head>
+
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    @if (@HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) == @System.Configuration.ConfigurationManager.AppSettings["PicfordUrl"])
+    {
+        //Pickford
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-64653662-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+
+            gtag('config', 'UA-64653662-1');
+        </script>
+        <title>Pickford</title>
+    }
+    else if (@HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) == @System.Configuration.ConfigurationManager.AppSettings["ExcessUrl"])
+    {
+        //Excess
+        <title>Excess International Movers</title>
+    }
+    else
+    {
+        //Anglo Pacific
+        <!-- Google Tag Manager -->
+        <script>
+            (function (w, d, s, l, i) {
+                w[l] = w[l] || []; w[l].push({
+                    'gtm.start':
+                        new Date().getTime(), event: 'gtm.js'
+                }); var f = d.getElementsByTagName(s)[0],
+                    j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                        'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+            })(window, document, 'script', 'dataLayer', 'GTM-W7ZCPG5');</script>
+        <!-- End Google Tag Manager -->
+        <title>Anglo Pacific</title>
+    }
+    <link href="https://fonts.googleapis.com/css?family=Hind:400,500,600&display=swap" rel="stylesheet">
+
+    @Styles.Render("~/Content/ui")
+
+    @if (@HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) == @System.Configuration.ConfigurationManager.AppSettings["PicfordUrl"])
+    {
+        //Picford
+        @Styles.Render("~/Content/PickfordsCSS")
+
+    }
+    else if (@HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) == @System.Configuration.ConfigurationManager.AppSettings["ExcessUrl"])
+    {
+        //Excess
+        @Styles.Render("~/Content/ExcessBaggageCSS")
+
+    }
+    else
+    {
+        //Anglo Pacific
+        @Styles.Render("~/Content/AngloCSS")
+    }
+
+    @Scripts.Render("~/Scripts/HeaderJQuery")
+
+</head>
+<body>
+    @if (@HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) == @System.Configuration.ConfigurationManager.AppSettings["AngloUrl"])
+    {
+        <!-- Google Tag Manager (noscript) -->
+        <noscript>
+            <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W7ZCPG5"
+                    height="0" width="0" style="display:none;visibility:hidden"></iframe>
+        </noscript>
+        <!-- End Google Tag Manager (noscript) -->
+    }
+
+    @Html.Partial("_Header")
+    <section>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-11 col-xl-10">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </section>
+    @Html.Partial("_Footer")
+
+    @Scripts.Render("~/Scripts/FooterJQuery")
+</body>
+</html>
+
+
+<script>
+    $(document).ready(function () {
+        //kendo.culture("en-IN");
+
+        /* custom select option */
+        $(".custom-inputs .custom-selection").niceSelect();
+
+        /* review slider */
+        var reviewSlider = $("#reviewSlider");
+        reviewSlider.owlCarousel({
+            margin: 40,
+            loop: true,
+            autoplay: true,
+            dots: false,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                992: {
+                    items: 2
+                },
+                1200: {
+                    items: 3
+                }
+            }
+        });
+
+        var errormessage = '@TempData[CustomEnums.NotifyType.Error.GetDescription()]';
+        var successmessage = '@TempData[CustomEnums.NotifyType.Success.GetDescription()]';
+        if (errormessage !== "") {
+            ShowErrorMessage(errormessage);
+        }
+
+        if (successmessage !== "") {
+            SucessMessage(successmessage);
+        }
+    });
+
+    function ShowErrorMessage(msg) {
+        var pNotify = new PNotify({
+            text: msg,
+            type: 'error'
+        });
+    }
+
+    function SucessMessage(msg) {
+        var pNotify = new PNotify({
+            text: msg,
+            type: 'success'
+        });
+    }
+
+    function LoadQuoteDetails(quoteType) {
+        $.ajax({
+            url: '@Url.Action("QuoteDetails", "Common")',
+            type: 'GET',
+            cache: false,
+            data: {
+                countryCode: '@SessionHelper.ToCountryCode',
+                quoteType: '@SessionHelper.QuoteType'
+            }
+        }).done(function (result) {
+            $('#QuoteDetails').html(result);
+        });
+    }
+</script>

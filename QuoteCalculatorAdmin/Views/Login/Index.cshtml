@@ -1,0 +1,151 @@
+﻿@model QuoteCalculator.Service.Models.UserLoginModel
+@using QuoteCalculatorAdmin.Common
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Anglo Pacific / Pickfords / Excess International</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+
+    @Styles.Render("~/content/NewUI_Style")
+    <link href="~/Content/new-theme/css/common-custom.css" rel="stylesheet" />
+    @*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+    <script src="~/Scripts/jquery-3.5.1.js"></script>
+    @Scripts.Render("~/Scripts/JQueryScripts")
+    <script src="~/Scripts/toastr.min.js"></script>
+    <link href="~/Content/css/toastr.min.css" rel="stylesheet" />
+</head>
+<body class="login-bg">
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="row">
+                <div class="col-lg-6 col-12 p-0 position-relative">
+                    <div class="whitebox">
+                        <div class="d-flex align-items-center">
+                            <div class="mr-3"><img src="@Url.Content("~/Content/img/logo.png")" style="height: 115px; border-radius:10px;" alt=""></div>
+                            <div class="mr-3"><img src="@Url.Content("~/Content/img/eb_logo.jpg")" style="height: 113px;border-radius:10px;" alt=""></div>
+                            <div class="mr-3"><img src="@Url.Content("~/Content/img/pf_logo.png")" style="height: 107px;border-radius:10px;" alt=""></div>
+                        </div>
+                        <h2>We Deliver. On quality, On Value, Online.</h2>
+                        <img src="~/Content/img/login.png" alt="This is an Image" class="loginsetimage" />
+                    </div>
+                 
+                </div>
+                <div class="col-lg-6 col-12 p-0">
+                    <div class="p-5 login-box">
+                        @using (Html.BeginForm("Index", "Login", FormMethod.Post, new { @autocomplete = "off", @role = "form" }))
+                    {
+                        @Html.HiddenFor(m => m.RememberMe)
+                        <div class="panel panel-body login-form">
+                            <img src="~/Content/img/merge-logos.png" alt="Logo" class="img-fluid loginlogo"/>
+                            <h2 class="logocontent">We Deliver. On quality, On Value, Online.</h2>
+                            <h4 class="content-group-lg text-center mb-4">Welcome Back<br /><span> <small class="display-block">Sign into Your Account</small></span></h4>
+                            <div class="form-group has-feedback has-feedback-left mt-5 mb-5">
+                                <label>E-mail Address</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="icon-user"></i></span>
+                                    </div>
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @required = "required", placeholder = "Email Address" })
+                                    @Html.ValidationMessageFor(m => m.Email)
+                                </div>
+                                <label>Password</label>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"> <i class="icon-lock2"></i></span>
+                                    </div>
+                                    @Html.TextBoxFor(m => m.Password, new { @class = "form-control", @required = "required", placeholder = "Password", @type = "password" })
+                                    @Html.ValidationMessageFor(m => m.Password)
+                                </div>
+
+
+                            </div>
+                          
+                            <div class="form-group login-options">
+                                <div class="d-flex align-items-center justify-content-between">
+                                        <label class="custom-checkbox ml-0">
+                                            Remember
+                                            <input type="checkbox"checked="checked" id="rememberMe" onclick="RememberMeChk();">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <a href="@Url.Action("ForgotPassword", "Login")" class="text-white"> Forgot password?</a>
+                                </div>
+                            </div>
+                            <div class="form-group mt-5">
+                                <button type="submit" class="btn login-btn w-100 p-3">Login</button>
+                            </div>
+                            @if (TempData["Message"] != null)
+                        {
+                            <div>
+                                @TempData["Message"].ToString()
+                            </div>
+                        }
+                        </div>
+                    }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+  
+   
+
+    @Scripts.Render("~/Scripts/LoginJQuery")
+    <script src="~/Scripts/pnotify.custom.min.js"></script>
+</body>
+</html>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        var rememberMe = $('#rememberMe').is(":checked");
+        $("#RememberMe").val(rememberMe);
+
+        // Style checkboxes and radios
+        $('.styled').uniform();
+    });
+
+    function RememberMeChk() {
+        var rememberMe = $('#rememberMe').is(":checked");
+        $("#RememberMe").val(rememberMe);
+    }
+
+    $(document).ready(function () {
+
+        var errormessage = '@TempData[CustomEnums.NotifyType.Error.GetDescription()]';
+        var successmessage = '@TempData[CustomEnums.NotifyType.Success.GetDescription()]';
+        if (errormessage !== "") {
+            toastr.error(errormessage)
+        }
+
+        if (successmessage !== "") {
+            toastr.success(successmessage)
+        }
+    });
+
+    function ShowErrorMessage(msg) {
+        var pNotify = new PNotify({
+            text: msg,
+            type: 'error'
+        });
+    }
+
+
+    function SucessMessage(msg) {
+        var pNotify = new PNotify({
+            text: msg,
+            type: 'success'
+        });
+
+    }
+</script>
+

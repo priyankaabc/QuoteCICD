@@ -1,0 +1,76 @@
+﻿@model QuoteCalculator.Service.Models.BaggageModel
+
+<style>
+    .h5, h5 {
+        font-size: 1.3rem;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-12">
+        @if (Model.calculationLines.Count > 0)
+        {
+            <h4 class="my-20" style="font-size:20px;"><b><span class="text-uppercase text-primary">YOUR QUOTE</span> </b></h4>
+            @*<h5 class="my-20"><b><span class="text-success">@ViewBag.Quantity Quantity </span> </b></h5>*@
+            <div class="table-responsive border">
+                <table class="table mb-0 table-bordered">
+                    @for (int i = 0; i < Model.calculationLines.Count; i++)
+                    {
+                        <tr>
+                            <td valign="middle" class="border-0"><span class="text-success" id="quotekey_@i"><b>@Model.calculationLines[i].DeliveryMethodName</b></span></td>
+                            <td valign="middle" class="border-0">
+                                <span class="text-success">@Model.calculationLines[i].CalcDescription </span>
+                                @if (Model.calculationLines[i].DeliveryMethodName == "Sea Freight To Door")
+                                {
+                                    <span class="text-success">(average)</span>
+                                }
+                                <span>@Model.calculationLines[i].TransitionTime</span>
+                            </td>
+                            <td valign="middle" class="border-0"><span class="text-success">Price </span>£<span id="quotePrice_@i"> @Model.calculationLines[i].Amount </span></td>
+                        </tr>
+                    }
+                </table>
+            </div>
+            if (@ViewBag.FromCountry == "UK")
+            {
+                <div class="row">
+                    @if (ViewBag.HasMainCarton && ViewBag.DeliveryCharge == 0)
+                    {
+                        <span>Delivery of flat pack cartons to @ViewBag.FromCity Free</span>
+                    }
+                    else if (ViewBag.HasMainCarton && ViewBag.DeliveryCharge > 0)
+                    {
+                        <span>Delivery of flat pack cartons to @ViewBag.FromCity £@ViewBag.DeliveryCharge</span>
+                    }
+                    else if (!ViewBag.HasMainCarton && ViewBag.DeliveryCharge == 0)
+                    {
+                        <span>Delivery of packing materials to @ViewBag.FromCity Free (if required)</span>
+                    }
+                    else
+                    {
+                        <span>Delivery of packing materials to @ViewBag.FromCity £@ViewBag.DeliveryCharge (if required)</span>
+                    }
+                </div>
+                <div class="row">
+                    Collection of packed items from <span>@ViewBag.FromCity</span>
+                    @if (@ViewBag.CollectionCharge > 0)
+                    {
+                        <span>£</span><span>@ViewBag.CollectionCharge</span>
+                    }
+                    else
+                    {
+                        <span>Free</span>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <div class="mt-20">
+                <p>
+                    Thank you for inquiry. We will get back soon.
+                </p>
+            </div>
+        }
+    </div>
+   
+</div>

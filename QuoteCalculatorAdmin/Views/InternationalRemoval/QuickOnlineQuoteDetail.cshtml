@@ -1,0 +1,269 @@
+﻿@model QuoteCalculator.Service.Models.AdditionalQuickQuoteItemsModel
+
+@{
+    ViewBag.Title = "Quick Online Quote Details";
+}
+
+<style>
+    body {
+        background-color: #FFFFFF !important;
+    }
+
+    #QuoteDetails {
+        background-color: #eeeded !important;
+    }
+
+    .PrintableLogo {
+        display: none;
+    }
+</style>
+<style type="text/css" media="print">
+    .NonPrintable {
+        display: none;
+    }
+
+    .nowrap {
+        white-space: nowrap;
+    }
+
+    .PrintableLogo {
+        display: block !important;
+    }
+
+    .hidescrollonprint {
+        overflow: hidden
+    }
+</style>
+<section>
+    <div class="container">
+        <div class="card">
+            <div class="card-body p-5">
+                <h1 class="text-primary"><b>Quick Online Quote</b></h1>
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+                                <div class="">
+                                    <div class="row justify-content-between">
+                                        <div class="col-sm-12 PrintableLogo">
+                                            @if (SessionHelper.CompanyId == 1)
+                                            {
+                                                <img src="/Content/img/logo.png" alt="Anglo Pacific">
+                                            }
+                                            else if (SessionHelper.CompanyId == 2)
+                                            {
+                                                <img src="/Content/img/pf_logo.png" alt="Pickfords">
+                                            }
+                                            else if (SessionHelper.CompanyId == 3)
+                                            {
+                                                <img src="~/Content/img/eb_logo.jpg" alt="Excess International Movers">
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center mb-3">
+                                        <div class="col-lg-6 col-12">
+
+                                            @if (@HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) == @System.Configuration.ConfigurationManager.AppSettings["PicfordUrl"])
+                                            {
+                                                //Pickford
+                                                <p class="h6"><b>Quote Number: </b><span class="text-success">PF<span>@ViewBag.ReferenceNo</span></span></p>
+                                            }
+                                            else if (@HttpContext.Current.Request.Url.GetLeftPart(UriPartial.Authority) == @System.Configuration.ConfigurationManager.AppSettings["ExcessUrl"])
+                                            {
+                                                //Excess
+                                                <p class="h6"><b>Quote Number: </b><span class="text-success">EX<span>@ViewBag.ReferenceNo</span></span></p>
+                                            }
+                                            else
+                                            {
+                                                //Anglo Pacific
+                                                <p class="h6"><b>Quote Number: </b><span class="text-success">AP<span>@ViewBag.ReferenceNo</span></span></p>
+                                            }
+                                        </div>
+                                        @*<div class="col-sm-auto">
+                                    <a class="btn btn-outline-secondary" href="@Url.Action("Index","InternationalRemoval",new {@InternationalRemovalId  = CommonHelper.Encode(SessionHelper.InternationalRemovalId.ToString())})">New Quote</a>
+                                    <a class="btn btn-outline-secondary" href="@Url.Action("Index","MyQuote")">My Quotes</a>
+                                </div>*@
+                                        <div class="col-lg-6 col-12 text-right NonPrintable">
+                                            <a class="btn btn-warning" href="@Url.Action("Edit", "InternationalRemoval", new {Id = Model.InternationalRemovalId})">Edit Quote</a>
+                                            <a class="btn btn-warning" href="@Url.Action("ViewMyQuote", "InternationalRemoval", new {Id = Model.InternationalRemovalId, email = ViewBag.Email})">View Quotes</a>
+                                            <a class="btn btn-warning" href="#" onclick="PrintQuoteDetails()">Print Quote</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="border-top py-3">
+                                    <h5 class="text-uppercase text-success"><b>YOUR SELECTION:</b></h5>
+                                    <span>From @ViewBag.PostCode, @ViewBag.FromCountry to @ViewBag.ToCity, @ViewBag.ToCountry</span>
+                                    <br />
+                                    <b>
+
+                                        @if (Model.Beds != null)
+                                        {
+                                            <span>
+                                                @Model.Beds Beds,
+                                            </span>
+                                        }
+                                        @Model.Cuft Cuft  @Model.Ftcontainer container
+                                        <br />
+                                        @*</b>*@
+                                        @*@if (Model.SpecialRequirements != null)
+                                {
+                                    <span>Special Requirement:  @Model.SpecialRequirements</span>
+                                }*@
+                                        @if (Model.strSpecialRequirements != null)
+                                        {
+                                            <span>Special Requirement: </span> <br />
+                                            foreach (var item in Model.strSpecialRequirements)
+                                            {
+                                                if (item != "")
+                                                {
+                                                    <span>
+                                                        @item
+                                                    </span> <br />
+                                                }
+                                            }
+                                        }
+                                    </b>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                @if (@ViewBag.RemovalQuote != null && @ViewBag.RemovalQuote > 0)
+                                {
+                                    <h5 class="my-4"><b><span class="text-uppercase text-success">YOUR QUOTE</span></b></h5>
+                                    <div class="table-responsive">
+                                        <table class="table mb-0">
+                                            <tr>
+                                                <td valign="middle" class="border-0"><span class="text-success"><b>Shared (Groupage) Container Service</b></span></td>
+                                                <td valign="middle" class="border-0"><span class="text-success">Transit time </span><span>7-10 Weeks</span></td>
+                                                <td valign="middle" class="border-0" style="font-size: large; font-weight: bold;"><span class="text-success">Price </span>£<span id="quotePrice"> @Math.Round(ViewBag.RemovalQuote, 2, MidpointRounding.ToEven) </span></td>
+                                                @if (!ViewBag.IsBooked)
+                                                {
+                                                    <td valign="middle" width="150" class="border-0"><button class="btn btn-outline-secondary NonPrintable" id="quoteOption" onclick="QuoteConfirm(@Model.InternationalRemovalId,'EXR')"><i class="icon-point-right font-lg"></i><span id="quoteSpan"> Book Now </span></button></td>
+                                                }
+                                                else
+                                                {
+                                                    <td valign="middle" width="150" class="border-0"><button title="Click here to unbook" class="btn btn-success rounded-pill btn-block btn-lg d-flex align-items-center legitRipple" onclick="updateBookedStatus('@Model.InternationalRemovalId')"><i class="icon-check2 font-lg"></i> Booked</button></td>
+                                                }
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div>
+                                        <ul style="line-height:35px;">
+                                            <li><span>Vehicle: <b>£ @ViewBag.Vehicle</b></span></li>
+                                            <li><span>Labour: <b>£ @ViewBag.Labour</b></span></li>
+                                            <li><span>PackingMaterials: <b>£ @ViewBag.PackingMaterials</b></span></li>
+                                            <li><span>SeaFreight: <b>£ @ViewBag.SeaFreight</b></span></li>
+                                            <li><span>ReceivingHandling: <b>£ @ViewBag.ReceivingHandling</b></span></li>
+                                            <li><span>DestinationCharges: <b>£ @ViewBag.DestinationCharges</b></span></li>
+                                            <li><span>OriginCost: <b>£ @ViewBag.OriginCost</b></span></li>
+                                            <li><span>OriginMarkup: <b>£ @ViewBag.OriginMarkup</b></span></li>
+                                            <li><span>Total: <b>£ @ViewBag.Total</b></span></li>
+                                        </ul>
+                                    </div>
+                                    <div class="border-top mt-4">
+                                        <i>At the time of providing this quote, the UK is experiencing increased risk from the coronavirus and the concern is that the number of confirmed cases of the virus will very likely increase. The Government has stated that it will be implementing (as yet) unspecified measures to combat the spread of the virus. In the extremely unlikely event that such measures are put in place which impact our ability to provide services to you (including but not limited to us having to suspend or cancel in full the services), or the virus otherwise affects our ability to fulfil your relocation, we will not be in a position to accept any liability for any losses that may arise and we limit our liability accordingly. We are keeping the matter under careful review and will ensure that all customers are advised of any developments that may affect fulfilment of contracted services</i>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <ul style="line-height:35px;">
+                                            <li><span>Vehicle: <b>£ @ViewBag.Vehicle</b></span></li>
+                                            <li><span>Labour: <b>£ @ViewBag.Labour</b></span></li>
+                                            <li><span>PackingMaterials: <b>£ @ViewBag.PackingMaterials</b></span></li>
+                                            <li><span>SeaFreight: <b>£ @ViewBag.SeaFreight</b></span></li>
+                                            <li><span>ReceivingHandling: <b>£ @ViewBag.ReceivingHandling</b></span></li>
+                                            <li><span>DestinationCharges: <b>£ @ViewBag.DestinationCharges</b></span></li>
+                                            <li><span>OriginCost: <b>£ @ViewBag.OriginCost</b></span></li>
+                                            <li><span>OriginMarkup: <b>£ @ViewBag.OriginMarkup</b></span></li>
+                                            <li><span>Total: <b>£ @ViewBag.Total</b></span></li>
+                                        </ul>
+                                    </div>
+                                    <div class="mt-4">
+                                        <p>
+                                            Thank you for inquiry. We will get back soon.
+                                        </p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        @*<div class="col-12">
+                    <div class="border-top pt-4">
+                        <div class="row justify-content-between">
+                        </div>
+                    </div>
+                </div>*@
+                        @if (@ViewBag.RemovalQuote != null && @ViewBag.RemovalQuote > 0)
+                        {
+                            <div id="QuoteDetails" style="width:100%;">
+
+                            </div>
+                        }
+                   
+            </div>
+        </div>
+        
+    </div>
+</section>
+<script src="~/Scripts/Common.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#menu_InternationalRemoval").addClass("active");
+        $("#menu_QuoteDetails").children().removeClass("collapsed");
+        $("#menu_QuoteDetails").children().addClass("show");
+        $("#menu_QuoteDetails").addClass("active");
+        LoadQuoteDetails();
+    });
+
+    function saveCompleted(data) {
+        if (data == "") {
+            location.href = '@Url.Action("ThankYou", "InternationalRemoval")?survey=QuickQuote';
+        }
+    }
+
+    function QuoteConfirm(id, type) {
+        bootbox.confirm("Are you sure you want to book now?", function (result) {
+            if (result) {
+                $("#quoteOption").removeClass("btn btn-outline-secondary");
+                $("#quoteOption").addClass("btn btn-success-600 btn-lg d-flex align-items-center legitRipple");
+                $("#quoteSpan").text("Booked");
+                $("#quoteOption").attr("disabled", "disabled");
+                var url = '@Url.Action("RemovalQuoteBook", "InternationalRemoval")';
+                var data = {
+                    'quoteId': id,
+                    'type': type
+                };
+                callwebservice(url,data, saveCompleted, false, datatypeEnum.text, typeEnum.post);
+            }
+        });
+        $(".prod_view").remove();
+        $(".modal-dialog").css("margin-top", "50px");
+    }
+
+    function PrintQuoteDetails() {
+        $(".collapse").addClass("in");
+        $(".k-table").css("width", "100%");
+        $(".navbar-nav").addClass("d-none");
+        window.print();
+        $(".navbar-nav").removeClass("d-none");
+        $(".collapse").removeClass("in");
+    }
+
+    function updateBookedStatus(quoteId) {
+        bootbox.confirm("Are you sure you want to unbook?", function (result) {
+            if (result) {                
+                var url = '@Url.Action("UpdateBookStatus", "InternationalRemoval")';
+                var data = {
+                    'quoteId': quoteId
+                };
+                callwebservice(url, data, updateStatusAfterSuccess, false, datatypeEnum.text, typeEnum.post);
+            }
+        });
+    }
+    function updateStatusAfterSuccess(data) {
+        if (data) {
+            location.reload();
+        }
+    }
+</script>

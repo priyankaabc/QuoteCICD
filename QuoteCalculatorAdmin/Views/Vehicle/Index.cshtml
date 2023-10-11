@@ -1,0 +1,182 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Vehicle Quote Details</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="tblVehicleList" class="table dataTable nowrap" width="100%">
+                    <thead>
+                        <tr>
+                            <th class="text-nowrap">Title</th>
+                            <th class="text-nowrap">First Name</th>
+                            <th class="text-nowrap">Last Name</th>
+                            <th class="text-nowrap">Email</th>
+                            <th class="text-nowrap">Telephone</th>
+                            <th class="text-nowrap">City</th>
+                            <th class="text-nowrap">Quote No</th>
+                            <th class="text-nowrap">Enquiry No</th>
+                            <th class="text-nowrap">Access Code</th>
+                            <th class="text-nowrap">Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var dataTableExample = $('#tblVehicleList').DataTable();
+    $(document).ready(function () {
+        $("#menu_Vehicle").addClass("active");
+        $("#menu_QuoteDetails").children().removeClass("collapsed");
+        $("#menu_QuoteDetails").children().addClass("show");
+        $("#menu_QuoteDetails").addClass("active");
+        BindVehicalGrid();
+    });
+    @*function BindVehicalGrid() {
+        $.ajax({
+            url: '@Url.Action("GetVehicaldata", "Vehicle")',
+            type: "GET",
+            data: {
+
+            },
+            dataType: "json",
+            success: GetData
+        });
+    }*@
+    function BindVehicalGrid() {
+        try {
+            if (dataTableExample != 'undefined') {
+                dataTableExample.destroy();
+            }
+
+            dataTableExample = $('#tblVehicleList').DataTable({
+                colReorder: {
+                    enable: false
+                },
+                serverSide: true,
+                language: {
+                    'processing': '<div class="loader"></div>'
+                },
+                ajax: {
+                    url: encodeURI('@Url.Action("GetVehicaldata", "Vehicle")'),
+                    type: 'POST',
+                    //data: function (d) {
+                    //    d.ImportQuoteId = 10;
+                    //}
+                },
+                fixedHeader: true,
+                fixedColumns: true,
+                "lengthMenu": [10, 20,50, 100, 200, 500],
+                "pageLength": 10,
+                "order": [],
+                //dom: 'Blfrtip',
+                //"aaData": data.Data,
+                "aoColumns": [
+                    {
+                        "mData": "TitleName",
+                        "className": "text-left",
+                    },
+                    {
+                        "mData": "Firstname",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "Lastname",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "Email",
+                        "className": "text-left",
+                    },
+                    {
+                        "mData": "Telephone",
+                        "className": "text-left",
+                    },
+                    {
+                        "mData": "CityName",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "QuoteNo",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "EnquiryNo",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "AccessCode",
+                        "className": "text-left"
+                    },
+
+                    {
+                        "mData": "Id",
+                        "bSortable": false,
+                        "className": "dt-center",
+                        "render": function (data, type, row, meta) {
+                            var ActionButtonEdit = '<a class="btn pr-2 edit-icon title="Edit" href=' + "@Url.Action("Edit", "Vehicle")?Id=" + row.Id + '><i class="fa-regular fa-pen-to-square"></i></a>';
+                            var ActionButtonDelete = '<a title="Delete" href="javascript:;" onclick="DeleteVehicleQuote(' + row.Id + ')" class="btn delete-icon"><i class="fa-regular fa-trash-can"></i></a>';
+
+                            var result = '';
+
+                            result = ActionButtonEdit +'&nbsp;&nbsp;&nbsp;'+ ActionButtonDelete;
+
+                            return result;
+                        }
+                    }
+                ],
+            });
+            $(".dataTables_length").css('clear', 'none');
+            $(".dataTables_length").css('margin-right', '20px');
+            $(".dataTables_info").css('clear', 'none');
+            $(".dataTables_info").css('padding', '0');
+        }
+        catch (e) {
+            alert(e.message);
+        }
+    }
+    function DeleteVehicleQuote(Id) {
+         bootbox.confirm({
+            message: "Are You Sure You Want To Delete Quote?",
+            buttons: {
+                cancel: {
+                    label: "No",
+                    className: "btn-cancel min-auto cancel"
+                },
+                confirm: {
+                    label: "Yes, Delete Quote",
+                    className: "btn-warning min-auto confirm"
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("Destroy", "Vehicle")',
+                        dataType: 'json',
+                        data: { Id: Id },
+                        cache: false,
+                        async: false,
+                        success: function (data) {
+                            if (data) {
+                                //SucessMessage(data.Message);
+                                BindVehicalGrid();
+                            }
+                        },
+                        error: function () {
+                            alert("We are facing some problem please try again later");
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+</script>

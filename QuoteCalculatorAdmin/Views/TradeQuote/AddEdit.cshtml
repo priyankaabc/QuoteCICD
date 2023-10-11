@@ -1,0 +1,204 @@
+﻿@model QuoteCalculator.Service.Models.TradeQuoteModel
+@using QuoteCalculator.Service.Models
+@using System.Web.Configuration
+@using Kendo.Mvc.UI
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<link href="~/Content/css/toastr.min.css" rel="stylesheet" />
+
+@using (Html.BeginForm("AddEdit", "TradeQuote", FormMethod.Post, new { @class = "custom-inputs", @Id = "TradeQuoteForm" }))
+{
+    @Html.HiddenFor(x => x.Id, new { @Name = "model.Id" })
+    @Html.HiddenFor(x => x.DestCountry, new { @Name = "model.DestCountry", @Id = "hdnDestCountry" })
+
+
+    <div class="row">
+
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title mb-0 d-flex align-items-center">
+                        <i class="icon-info22 position-left icon-set"></i> Trade Quote Details
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="panel panel-white bg-white p-4 mb-2">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h6 class="panel-title">
+                                    <i class="icon-location4 position-left icon-set"></i> <b class="text-bold pt-0" style="text-transform: uppercase;">Origin Details</b>
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            @*<div class="col-md-3 form-group">
+                                    <b>Origin Client Name</b>
+                                    @(Html.Kendo().TextBoxFor(m => m.ClientName).Name("model.ClientName").HtmlAttributes(new { style = "width:100%;", @tabIndex = 1 }))
+                                    @Html.ValidationMessageFor(m => m.ClientName)
+                                </div>*@
+
+
+                            <div class="col-lg-4 col-md-6 col-12 form-group">
+
+                                <label>Agent</label>
+                                @Html.DropDownListFor(m => m.AgentId, new SelectList((IEnumerable<SelectListItem>)ViewBag.AgentList, "Value", "Text"), "-- Select Field --", new { @class = "form-control", @tabIndex = 2, @Name = "model.AgentId" })
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.AgentId" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="panel panel-white bg-white p-4 mb-2">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h6 class="panel-title">
+                                    <i class="icon-location3 position-left icon-set"></i> <b class="text-bold pt-0" style="text-transform: uppercase;">Destination Details</b>
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-lg-4 col-md-6 col-12 form-group">
+
+                                <label>Destination Country</label>
+                                @Html.DropDownListFor(m => m.DestCountryId, new SelectList((IEnumerable<SelectListItem>)ViewBag.CountryList, "Value", "Text"), "-- Select Field --", new { @class = "form-control", @tabIndex = 5, @Name = "model.DestCountryId" })
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.DestCountryId" data-valmsg-replace="true"></span>
+
+                            </div>
+
+                            <div class="col-lg-4 col-md-6 col-12 form-group">
+
+                                <label>Destination Town</label>
+                                @Html.DropDownListFor(m => m.DestCode, new List<SelectListItem>(), "-- Select Field --", new { @class = "form-control", @tabIndex = 6, @Name = "model.DestCode" })
+
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.DestCode" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6 col-12 form-group">
+                                <label>Volume (Cuft)</label>
+                                @Html.TextBoxFor(m => m.Volume, new { @class = "form-control", @tabIndex = 7, @Name = "model.Volume" })
+                                @*  @(Html.Kendo().TextBoxFor(m => m.Volume).Name("model.Volume").HtmlAttributes(new { style = "width:100%;", @tabIndex = 7, @type = "number" }))*@
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.Volume" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-12 form-group">
+                                <label>Service</label>
+                                @Html.DropDownListFor(m => m.ServiceId, new SelectList((IEnumerable<SelectListItem>)ViewBag.ServiceList, "Value", "Text"), "-- Select Field --", new { @class = "form-control", @tabIndex = 8, @Name = "model.ServiceId" })
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.ServiceId" data-valmsg-replace="true"></span>
+                            </div>
+
+
+                            <div class="col-lg-4 col-md-6 col-12 form-group">
+
+                                <label>Branch</label>
+
+                                @Html.DropDownListFor(m => m.Branch, new SelectList((IEnumerable<CommonModel>)ViewBag.BranchList, "Value", "Text"), "-- Select Field --", new { @class = "form-control", @tabIndex = 9, @Name = "model.Branch" })
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.Branch" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mt-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <a href="@Url.Action("Index", "TradeQuote")" class="btn btn-cancel">Back</a>
+                                <button class="btn btn-warning" onclick="checkvalidation()" type="submit">Next</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+<script src="~/Scripts/toastr.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function (e) {
+        //OnAgentChange();
+        $("#menu_TradeQuote").addClass("active");
+        OnDestCountryChange();
+    });
+
+    function getCountryCode() {
+        var temp = $('#DestCountry').data("kendoDropDownList").value();
+        $("#hdnDestCountry").val(temp);
+        return {
+            countryCode: $('#DestCountry').data("kendoDropDownList").value()
+        };
+    }
+
+    $("#DestCountryId").change(function () {
+
+        OnDestCountryChange();
+    });
+    //$("#AgentId").change(function () {
+
+    //    //OnAgentChange();
+    //});
+    @*function OnAgentChange() {
+        const AgentId = $("#AgentId").val();
+           $.ajax({
+                url: '@Url.Action("GetBranchById", "TradeQuote")',
+                type: "POST",
+                dataType: "json",
+                data: {
+                    Id: AgentId
+                },
+               success: function (data) {
+                   $('select[name^="salesrep"] option:selected').attr("selected", null);
+                   const Branch = '@Model.Branch';
+                   $("#Branch").html("");
+                    let DDL = "<select'>";
+                    for (var i = 0; i < data.length; i++) {
+                        if (Branch != null && data[i].Value == Branch) {
+                            DDL = DDL + '<option value = "' + data[i].Value + '" Selected>' + data[i].Text + '</option>';
+                        } else {
+                            DDL = DDL + '<option value = "' + data[i].Value + '">' + data[i].Text + '</option>';
+                        }
+                    }
+                    DDL = DDL + '</select>';
+                   $("#Branch").html(DDL);
+
+                }
+            })
+    }*@
+    function OnDestCountryChange() {
+        const countryId = $("#DestCountryId").val();
+
+            $.ajax({
+                url: '@Url.Action("GetDestCodeByCountryId", "TradeQuote")',
+                async: false,
+                type: 'POST',
+                data: { 'countryCode': countryId },
+                success: function (data) {
+                    const DestCode = '@Model.DestCode';
+                    $("#DestCode").html("");
+                    let DDL = "<select'>";
+                    for (var i = 0; i < data.length; i++) {
+                        if (DestCode != null && data[i].DestCode == DestCode) {
+                            DDL = DDL + '<option value = "' + data[i].DestCode + '" Selected>' + data[i].DestCityName + '</option>';
+                        } else {
+                            DDL = DDL + '<option value = "' + data[i].DestCode + '">' + data[i].DestCityName + '</option>';
+                        }
+                    }
+                    DDL = DDL + '</select>';
+                    $("#DestCode").html(DDL);
+                },
+            })
+    }
+    function checkvalidation() {
+        if ($('#DestCountryId').value() == "") {
+            $("#DestCountryId").attr("required", "required");
+            $("#DestCountryId").attr("Name", "Destination Country");
+        } else {
+            $("#DestCountryId").attr("Name", "model.DestCountry");
+        }
+        if (!$("#TradeQuoteForm").valid()) {
+            return false;
+        }
+    }
+
+</script>

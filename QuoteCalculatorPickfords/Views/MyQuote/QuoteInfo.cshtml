@@ -1,0 +1,277 @@
+﻿
+@model QuoteCalculatorPickfords.Models.QuoteInformationModel
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-breadcrumb text-center font-nr mb-2">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="#">My quotes</a></li>
+    </ul>
+</div>
+<h1 class="text-primary text-center mb-4"><b>My Quotes</b></h1>
+<div class="row">
+    @if (Model.bagageQuoteInfo.Count > 0)
+    {
+        <div class="col-12">
+            <h3 class="text-center text-uppercase text-success mb-4"><b>BAGGAGE QUOTES</b></h3>
+            @for (var i = 0; i < Model.bagageQuoteInfo.Count; i++)
+            {
+                <div class="row justify-content-md-between border-bottom border-dark pt-4 mb-4">
+                    <div class="col-auto">
+                        <h5><span>AP</span>@Model.bagageQuoteInfo[i].CustomerRefNo <span class="text-success ml-4">@Model.bagageQuoteInfo[i].CreatedDate.ToString("dd/MM/yyyy")</span></h5>
+                    </div>
+                    <div class="col-auto">
+                        <p><small><a class="my-quotes" href="@Url.Action("Baggage","Baggage" , new { quoteId = CommonHelper.Encode(Model.bagageQuoteInfo[i].Id.ToString()), isMyQuote = true})">View quote details</a></small></p>
+                    </div>
+                    <div class="col-12">
+                        <span><b>From @ViewBag.FromCity, @Model.bagageQuoteInfo[i].FromCountry to @ViewBag.ToCity, @Model.bagageQuoteInfo[i].ToCountry</b></span>
+                        <p class="border-bottom pb-2 text-success mb-0"><b>@Model.bagageQuoteInfo[i].CartonList</b></p>
+                    </div>
+                    <div class="col-12">
+                        <table class="table mb-0">
+                            @if (Model.bagageQuoteInfo[i].BaggagePriceList.Count > 0)
+                            {
+                                for (var j = 0; j < Model.bagageQuoteInfo[i].BaggagePriceList.Count; j++)
+                                {
+                                    <tr class="quotes-list">
+                                        <td valign="middle" width="50" class="border-0"><span class="quote-opt-no font-lg text-success">@(j + 1)</span></td>
+                                        <td valign="middle" class="border-0"><span class="text-success" id="quotekey_@i"><b>@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName</b></span></td>
+                                        <td valign="middle" class="border-0"><span class="text-success">@Model.bagageQuoteInfo[i].BaggagePriceList[j].CalcDescription </span><span>@Model.bagageQuoteInfo[i].BaggagePriceList[j].TransitionTime</span></td>
+                                        <td valign="middle" class="border-0" style="font-size: large; font-weight: bold;"><span class="text-success">Price </span>£<span id="quotePrice_@i"> @Math.Round(Convert.ToDecimal(Model.bagageQuoteInfo[i].BaggagePriceList[j].Amount), 2, MidpointRounding.ToEven) </span></td>
+
+                                        @if (@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName == "Air freight To Airport")
+                                        {
+                                            if (Model.bagageQuoteInfo[i].AirFreightToAirport == true)
+                                            {
+                                                <td valign="middle" width="150" class="border-0"><button class="btn btn-success-600 btn-lg d-flex align-items-center legitRipple" disabled><i class="bx bx-check font-lg"></i>BOOKED</button></td>
+                                            }
+                                            else
+                                            {
+                                                if (Model.bagageQuoteInfo[i].isMethodSelected == true)
+                                                {
+                                                    <td valign="middle" width="150" class="border-0"><button class="btn btn-outline-secondary" disabled><i class="bx bx-check font-lg"></i>BOOK NOW</button></td>
+                                                }
+                                                else
+                                                {
+                                                    <td valign="middle" width="150" class="border-0"><button class="btn btn-outline-secondary" id="AirfreightToAirportButton" onclick="BookBaggageQuote(this,'@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName',@Model.bagageQuoteInfo[i].BaggagePriceList[j].Amount,@Model.bagageQuoteInfo[i].Id)"><i class="bx bx-check font-lg"></i>BOOK NOW</button></td>
+                                                }
+                                            }
+                                        }
+                                        @if (@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName == "Air freight To Door")
+                                        {
+                                            if (Model.bagageQuoteInfo[i].AirFreightToDoor == true)
+                                            {
+                                                <td valign="middle" width="150" class="border-0"><button class="btn btn-success-600 btn-lg d-flex align-items-center legitRipple" disabled><i class="bx bx-check font-lg"></i>BOOKED</button></td>
+                                            }
+                                            else
+                                            {
+                                                if (Model.bagageQuoteInfo[i].isMethodSelected == true)
+                                                {
+                                                    <td valign="middle" width="150" class="border-0"><button class="btn btn-outline-secondary" disabled><i class="bx bx-check font-lg"></i>BOOK NOW</button></td>
+                                                }
+                                                else
+                                                {
+                                                    <td valign="middle" width="150" class="border-0"><button class="btn btn-outline-secondary" id="AirfreightToDoorButton" onclick="BookBaggageQuote(this,'@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName',@Model.bagageQuoteInfo[i].BaggagePriceList[j].Amount,@Model.bagageQuoteInfo[i].Id)"><i class="bx bx-check font-lg"></i>BOOK NOW</button></td>
+                                                }
+                                            }
+                                        }
+                                        @if (@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName == "Courier")
+                                        {
+                                            if (Model.bagageQuoteInfo[i].Courier == true)
+                                            {
+                                                <td valign="middle" width="150" class="border-0"><button class="btn btn-success-600 btn-lg d-flex align-items-center legitRipple" disabled><i class="bx bx-check font-lg"></i>BOOKED</button></td>
+                                            }
+                                            else
+                                            {
+                                                if (Model.bagageQuoteInfo[i].isMethodSelected == true)
+                                                {
+                                                    <td valign="middle" width="150" class="border-0"><button class="btn btn-outline-secondary" disabled><i class="bx bx-check font-lg"></i>BOOK NOW</button></td>
+                                                }
+                                                else
+                                                {
+                                                    <td valign="middle" width="150" class="border-0"><button class="btn btn-outline-secondary" id="CourierButton" onclick="BookBaggageQuote(this,'@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName',@Model.bagageQuoteInfo[i].BaggagePriceList[j].Amount,@Model.bagageQuoteInfo[i].Id)"><i class="bx bx-check font-lg"></i>BOOK NOW</button></td>
+                                                }
+                                            }
+                                        }
+                                        @if (@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName == "Sea Freight")
+                                        {
+                                            if (Model.bagageQuoteInfo[i].SeaFreight == true)
+                                            {
+                                                <td valign="middle" width="150" class="border-0"><button class="btn btn-success-600 btn-lg d-flex align-items-center legitRipple" disabled><i class="bx bx-check font-lg"></i>BOOKED</button></td>
+                                            }
+                                            else
+                                            {
+                                                if (Model.bagageQuoteInfo[i].isMethodSelected == true)
+                                                {
+                                                    <td valign="middle" width="150" class="border-0"><button class="btn btn-outline-secondary" disabled><i class="bx bx-check font-lg"></i>BOOK NOW</button></td>
+                                                }
+                                                else
+                                                {
+                                                    <td valign="middle" width="150" class="border-0"><button class="btn btn-outline-secondary" id="SeaFreightButton" onclick="BookBaggageQuote(this,'@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName',@Model.bagageQuoteInfo[i].BaggagePriceList[j].Amount,@Model.bagageQuoteInfo[i].Id)"><i class="bx bx-check font-lg"></i>BOOK NOW</button></td>
+                                                }
+                                            }
+                                        }
+
+                                    </tr>
+                                }
+                            }
+                        </table>
+                        <div class="col-12 mt-4">
+                            <small style="color:gray">
+                                Delivery of flat pack cartons to <span>@ViewBag.FromCity</span>
+                                @if (@ViewBag.DeliveryCharge > 0)
+                                {
+                                    <span>£</span><span>@ViewBag.DeliveryCharge</span>
+                                }
+                                else
+                                {
+                                    <span>Free</span>
+                                }
+                            </small>
+                        </div>
+                        <div class="col-12">
+                            <small style="color:gray">
+                                Collection of packed items from <span>@ViewBag.FromCity</span>
+                                @if (@ViewBag.CollectionCharge > 0)
+                                {
+                                    <span>£</span><span>@ViewBag.CollectionCharge</span>
+                                }
+                                else
+                                {
+                                    <span>Free</span>
+                                }
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<script>
+    function saveCompleted(data) {
+        if (data == "") {
+
+        }
+    }
+
+    @*function BookVehicleQuote(e,vehicleId,str)
+    {
+
+        var btnId = e.id;
+        bootbox.confirm("Are you sure, you want to book this Quote?", function (result) {
+            if (result) {
+                var url = '@Url.Action("Quote", "Vehicle")';
+                var data = {
+                    'VehicleId': vehicleId,
+                    'str': str
+                };
+                callwebservice(url, data, saveCompleted, false, datatypeEnum.text, typeEnum.post);
+                location.reload();
+                //if (btnId == "Fclbuttton") {
+                //    $("#Fclbuttton").removeClass("btn btn-outline-secondary");
+                //    $("#Fclbuttton").addClass("btn btn-success-600 btn-lg d-flex align-items-center legitRipple");
+                //    $("#Fclbuttton").attr("disabled", "disabled");
+                //    $("#GPGbuttton").attr("disabled", "disabled");
+                //    $("#Fclbuttton").text("Booked");
+                //}
+
+                //if (btnId == "GPGbuttton") {
+                //    $("#GPGbuttton").removeClass("btn btn-outline-secondary");
+                //    $("#GPGbuttton").addClass("btn btn-success-600 btn-lg d-flex align-items-center legitRipple");
+                //    $("#GPGbuttton").attr("disabled", "disabled");
+                //    $("#Fclbuttton").attr("disabled", "disabled");
+                //    $("#GPGbuttton").text("Booked");
+                //}
+            }
+        });
+    }*@
+
+    function BookBaggageQuote(e, quotekey, quotePrice, quoteNo) {
+        var btnId = e.id;
+        bootbox.confirm("Are you sure, you want to book this Quote?", function (result) {
+            if (result) {
+                //var quotekey = $("#quotekey_" + btnId.split('_')[1]).text();
+                //var quotePrice = $("#quotePrice_" + btnId.split('_')[1]).text();
+
+                //for (var i = 0; i < count; i++) {
+                //    if (i != btnId.split('_')[1]) {
+                //        $("#quoteOption_" + [i]).removeClass("btn btn-success-600 btn-lg d-flex align-items-center legitRipple");
+                //        $("#quoteOption_" + [i]).addClass("btn btn-outline-secondary");
+                //        $("#quoteSpan_" + [i]).text("Book Now");
+                //    }
+                //}
+
+                //$("#" + btnId).removeClass("btn btn-outline-secondary");
+                //$("#" + btnId).addClass("btn btn-success-600 btn-lg d-flex align-items-center legitRipple");
+                //$("#quoteSpan_" + btnId.split('_')[1]).text("Booked");
+                var url = '@Url.Action("BaggageQuoteCal", "Baggage")';
+                var data = {
+                            'colName': quotekey.replace(' ',''),
+                            'quotePrice': quotePrice,
+                            'quoteNo': quoteNo
+                            };
+                callwebservice(url, data, saveCompleted, false, datatypeEnum.text, typeEnum.post);
+                location.reload();
+                //if (btnId == "AirfreightToAirportButton") {
+                //    $("#AirfreightToAirportButton").removeClass("btn btn-outline-secondary");
+                //    $("#AirfreightToAirportButton").addClass("btn btn-success-600 btn-lg d-flex align-items-center legitRipple");
+                //    $("#AirfreightToAirportButton").attr("disabled", "disabled");
+                //    $("#AirfreightToDoorButton").attr("disabled", "disabled");
+                //    $("#CourierButton").attr("disabled", "disabled");
+                //    $("#SeaFreightButton").attr("disabled", "disabled");
+                //    $("#AirfreightToAirportButton").text("Booked");
+                //}
+                //if (btnId == "AirfreightToDoorButton") {
+                //    $("#AirfreightToDoorButton").removeClass("btn btn-outline-secondary");
+                //    $("#AirfreightToDoorButton").addClass("btn btn-success-600 btn-lg d-flex align-items-center legitRipple");
+                //    $("#AirfreightToAirportButton").attr("disabled", "disabled");
+                //    $("#AirfreightToDoorButton").attr("disabled", "disabled");
+                //    $("#CourierButton").attr("disabled", "disabled");
+                //    $("#SeaFreightButton").attr("disabled", "disabled");
+                //    $("#AirfreightToDoorButton").text("Booked");
+                //}
+                //if (btnId == "CourierButton") {
+                //    $("#CourierButton").removeClass("btn btn-outline-secondary");
+                //    $("#CourierButton").addClass("btn btn-success-600 btn-lg d-flex align-items-center legitRipple");
+                //    $("#AirfreightToAirportButton").attr("disabled", "disabled");
+                //    $("#AirfreightToDoorButton").attr("disabled", "disabled");
+                //    $("#CourierButton").attr("disabled", "disabled");
+                //    $("#SeaFreightButton").attr("disabled", "disabled");
+                //    $("#CourierButton").text("Booked");
+                //}
+                //if (btnId == "SeaFreightButton") {
+                //    $("#SeaFreightButton").removeClass("btn btn-outline-secondary");
+                //    $("#SeaFreightButton").addClass("btn btn-success-600 btn-lg d-flex align-items-center legitRipple");
+                //    $("#AirfreightToAirportButton").attr("disabled", "disabled");
+                //    $("#AirfreightToDoorButton").attr("disabled", "disabled");
+                //    $("#CourierButton").attr("disabled", "disabled");
+                //    $("#SeaFreightButton").attr("disabled", "disabled");
+                //    $("#SeaFreightButton").text("Booked");
+                //}
+            }
+        });
+    }
+
+    @*function BookRemovalQuote(id) {
+        bootbox.confirm("Are you sure, you want to book this Quote?", function (result) {
+            if (result) {
+                var url = '@Url.Action("RemovalQuoteBook", "InternationalRemoval")';
+                var data = {
+                    'quoteId': id,
+                    'type': 'EXR'
+                };
+                callwebservice(url, data, saveCompleted, false, datatypeEnum.text, typeEnum.post);
+                location.reload();
+                //$("#quoteOption").removeClass("btn btn-outline-secondary");
+                //$("#quoteOption").addClass("btn btn-success-600 btn-lg d-flex align-items-center legitRipple");
+                //$("#quoteOption").attr("disabled", "disabled");
+                //$("#quoteOption").text("Booked");
+            }
+        });
+    }*@
+</script>

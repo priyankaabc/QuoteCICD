@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "bootstrap@5.2.2",
+      "destination": "Content/bootstrap/"
+    },
+    {
+      "library": "jquery@3.6.1",
+      "destination": "Content/jquery/"
+    },
+    {
+      "library": "summernote@0.8.20",
+      "destination": "Content/summernote/"
+    },
+    {
+      "library": "select2@4.0.13",
+      "destination": "Content/select2/",
+      "files": [
+        "js/select2.min.js",
+        "js/select2.js",
+        "css/select2.css",
+        "css/select2.min.css",
+        "js/select2.full.js",
+        "js/select2.full.min.js"
+      ]
+    },
+    {
+      "library": "bootstrap-select@1.13.18",
+      "destination": "Content/bootstrap-select/",
+      "files": [
+        "js/bootstrap-select.min.js",
+        "css/bootstrap-select.css",
+        "css/bootstrap-select.css.map",
+        "css/bootstrap-select.min.css",
+        "js/bootstrap-select.js",
+        "js/bootstrap-select.js.map",
+        "js/bootstrap-select.min.js.map"
+      ]
+    },
+    {
+      "library": "popper.js@2.11.6",
+      "destination": "Content/popper.js/"
+    }
+  ]
+}

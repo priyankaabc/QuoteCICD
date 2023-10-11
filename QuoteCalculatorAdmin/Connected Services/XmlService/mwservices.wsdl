@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="urn:openedgeservices:wsa1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:S1="urn:soap-fault:details" xmlns:S2="urn:openedgeservices:wsa1:mwservices" xmlns="http://schemas.xmlsoap.org/wsdl/" name="mwservices" targetNamespace="urn:openedgeservices:wsa1" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:documentation>Author=Sav, EncodingType=DOC_LITERAL, WSA_Product=10.1B03 - N/A</wsdl:documentation>
+  <wsdl:types>
+    <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" targetNamespace="urn:soap-fault:details">
+      <xsd:element name="FaultDetail">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="errorMessage" type="xsd:string" />
+            <xsd:element name="requestID" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+    <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="urn:openedgeservices:wsa1:mwservices">
+      <xsd:complexType name="mwgetfile_ttRow">
+        <xsd:sequence>
+          <xsd:element name="ttid" nillable="true" type="xsd:int" />
+          <xsd:element name="tttype" nillable="true" type="xsd:string" />
+          <xsd:element name="ttdata" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="mwgetfile_ttParam">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="ttRow" type="S2:mwgetfile_ttRow" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="mwweb_ttRow">
+        <xsd:sequence>
+          <xsd:element name="tid" nillable="true" type="xsd:int" />
+          <xsd:element name="ttable" nillable="true" type="xsd:string" />
+          <xsd:element name="tstructure" nillable="true" type="xsd:string" />
+          <xsd:element name="ttype" nillable="true" type="xsd:string" />
+          <xsd:element name="t1" nillable="true" type="xsd:string" />
+          <xsd:element name="t2" nillable="true" type="xsd:string" />
+          <xsd:element name="t3" nillable="true" type="xsd:string" />
+          <xsd:element name="t4" nillable="true" type="xsd:string" />
+          <xsd:element name="t5" nillable="true" type="xsd:string" />
+          <xsd:element name="t6" nillable="true" type="xsd:string" />
+          <xsd:element name="t7" nillable="true" type="xsd:string" />
+          <xsd:element name="t8" nillable="true" type="xsd:string" />
+          <xsd:element name="t9" nillable="true" type="xsd:string" />
+          <xsd:element name="t10" nillable="true" type="xsd:string" />
+          <xsd:element name="t11" nillable="true" type="xsd:string" />
+          <xsd:element name="t12" nillable="true" type="xsd:string" />
+          <xsd:element name="t13" nillable="true" type="xsd:string" />
+          <xsd:element name="t14" nillable="true" type="xsd:string" />
+          <xsd:element name="t15" nillable="true" type="xsd:string" />
+          <xsd:element name="t16" nillable="true" type="xsd:string" />
+          <xsd:element name="t17" nillable="true" type="xsd:string" />
+          <xsd:element name="t18" nillable="true" type="xsd:string" />
+          <xsd:element name="t19" nillable="true" type="xsd:string" />
+          <xsd:element name="t20" nillable="true" type="xsd:string" />
+          <xsd:element name="t21" nillable="true" type="xsd:string" />
+          <xsd:element name="t22" nillable="true" type="xsd:string" />
+          <xsd:element name="t23" nillable="true" type="xsd:string" />
+          <xsd:element name="t24" nillable="true" type="xsd:string" />
+          <xsd:element name="t25" nillable="true" type="xsd:string" />
+          <xsd:element name="t26" nillable="true" type="xsd:string" />
+          <xsd:element name="t27" nillable="true" type="xsd:string" />
+          <xsd:element name="t28" nillable="true" type="xsd:string" />
+          <xsd:element name="t29" nillable="true" type="xsd:string" />
+          <xsd:element name="t30" nillable="true" type="xsd:string" />
+          <xsd:element name="t31" nillable="true" type="xsd:string" />
+          <xsd:element name="t32" nillable="true" type="xsd:string" />
+          <xsd:element name="t33" nillable="true" type="xsd:string" />
+          <xsd:element name="t34" nillable="true" type="xsd:string" />
+          <xsd:element name="t35" nillable="true" type="xsd:string" />
+          <xsd:element name="t36" nillable="true" type="xsd:string" />
+          <xsd:element name="t37" nillable="true" type="xsd:string" />
+          <xsd:element name="t38" nillable="true" type="xsd:string" />
+          <xsd:element name="t39" nillable="true" type="xsd:string" />
+          <xsd:element name="t40" nillable="true" type="xsd:string" />
+          <xsd:element name="t41" nillable="true" type="xsd:string" />
+          <xsd:element name="t42" nillable="true" type="xsd:string" />
+          <xsd:element name="t43" nillable="true" type="xsd:string" />
+          <xsd:element name="t44" nillable="true" type="xsd:string" />
+          <xsd:element name="t45" nillable="true" type="xsd:string" />
+          <xsd:element name="t46" nillable="true" type="xsd:string" />
+          <xsd:element name="t47" nillable="true" type="xsd:string" />
+          <xsd:element name="t48" nillable="true" type="xsd:string" />
+          <xsd:element name="t49" nillable="true" type="xsd:string" />
+          <xsd:element name="t50" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="mwweb_ttParam">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="ttRow" type="S2:mwweb_ttRow" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="mwgetfile">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="vUser" nillable="true" type="xsd:string" />
+            <xsd:element name="vPass" nillable="true" type="xsd:string" />
+            <xsd:element name="vddid" nillable="true" type="xsd:string" />
+            <xsd:element name="vKeyaction" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam1" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam2" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam3" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam4" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="mwgetfileResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="result" nillable="true" type="xsd:string" />
+            <xsd:element name="tt" nillable="true" type="S2:mwgetfile_ttParam" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="mwweb">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="pUser" nillable="true" type="xsd:string" />
+            <xsd:element name="pPass" nillable="true" type="xsd:string" />
+            <xsd:element name="pCall" nillable="true" type="xsd:string" />
+            <xsd:element name="pRP" nillable="true" type="xsd:string" />
+            <xsd:element name="pWaybill" nillable="true" type="xsd:string" />
+            <xsd:element name="pIQID" nillable="true" type="xsd:string" />
+            <xsd:element name="pCustCode" nillable="true" type="xsd:string" />
+            <xsd:element name="pCredCode" nillable="true" type="xsd:string" />
+            <xsd:element name="pAgentID" nillable="true" type="xsd:string" />
+            <xsd:element name="pPage" nillable="true" type="xsd:string" />
+            <xsd:element name="pResults" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam1" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam2" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam3" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam4" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam5" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam6" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam7" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam8" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam9" nillable="true" type="xsd:string" />
+            <xsd:element name="pParam10" nillable="true" type="xsd:string" />
+            <xsd:element name="tt" nillable="true" type="S2:mwweb_ttParam" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="mwwebResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="result" nillable="true" type="xsd:string" />
+            <xsd:element name="tt" nillable="true" type="S2:mwweb_ttParam" />
+            <xsd:element name="pOK" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="mwservices_mwgetfile">
+    <wsdl:part name="parameters" element="S2:mwgetfile" />
+  </wsdl:message>
+  <wsdl:message name="mwservices_mwwebResponse">
+    <wsdl:part name="parameters" element="S2:mwwebResponse" />
+  </wsdl:message>
+  <wsdl:message name="mwservices_mwgetfileResponse">
+    <wsdl:part name="parameters" element="S2:mwgetfileResponse" />
+  </wsdl:message>
+  <wsdl:message name="mwservices_mwweb">
+    <wsdl:part name="parameters" element="S2:mwweb" />
+  </wsdl:message>
+  <wsdl:message name="FaultDetailMessage">
+    <wsdl:part name="FaultDetail" element="S1:FaultDetail" />
+  </wsdl:message>
+  <wsdl:portType name="mwservicesObj">
+    <wsdl:operation name="mwgetfile">
+      <wsdl:input message="tns:mwservices_mwgetfile" />
+      <wsdl:output message="tns:mwservices_mwgetfileResponse" />
+      <wsdl:fault name="mwservicesFault" message="tns:FaultDetailMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="mwweb">
+      <wsdl:input message="tns:mwservices_mwweb" />
+      <wsdl:output message="tns:mwservices_mwwebResponse" />
+      <wsdl:fault name="mwservicesFault" message="tns:FaultDetailMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="mwservicesObj" type="tns:mwservicesObj">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="mwgetfile">
+      <soap:operation soapAction="mwsoap" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="mwservicesFault">
+        <soap:fault use="literal" name="mwservicesFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="mwweb">
+      <soap:operation soapAction="mwsoap" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="mwservicesFault">
+        <soap:fault use="literal" name="mwservicesFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="mwservicesService">
+    <wsdl:port name="mwservicesObj" binding="tns:mwservicesObj">
+      <wsdl:documentation>
+      </wsdl:documentation>
+      <soap:address location="https://mwserver02x.anglopacific.co.uk:8444/wsa3/wsa1" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

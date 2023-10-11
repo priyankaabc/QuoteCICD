@@ -1,0 +1,50 @@
+﻿@model QuoteCalculator.Service.Models.RoleModel
+
+@{
+    Layout = null;
+}
+
+
+
+@using (Html.BeginForm("AddEdit", "Role", FormMethod.Post, new { @class = "custom-inputs", @id = "EditRoleForm" }))
+{
+    @Html.HiddenFor(model => model.RoleId)
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                @Html.LabelFor(model => model.RoleName)
+                @Html.TextBoxFor(model => model.RoleName, new { @class = "form-control" })
+                <span class="text-danger d-none ValidateName" >Role Name Is Required</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-check">
+                @Html.CheckBoxFor(model => model.IsActive, new { @class = "form-check-input" })
+                @Html.LabelFor(model => model.IsActive, new { @class = "form-check-label" })
+            </div>
+        </div>
+    </div>
+
+    <!-- Rest of your table code remains unchanged -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-warning mr-3" onclick="AddEditRoles()">Save</button>
+                <button type="button" onclick="cancelClick()" class="btn btn-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+}
+
+@*<div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>*@
+
+@*@section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }*@

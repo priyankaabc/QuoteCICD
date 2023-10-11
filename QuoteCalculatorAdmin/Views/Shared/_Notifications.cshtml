@@ -1,0 +1,106 @@
+﻿@using QuoteCalculatorAdmin.Common
+
+@if (TempData["Message"] != null)
+{
+    NotificationMessage msg = (NotificationMessage)TempData["Message"];
+
+    if (msg.Type == CustomEnums.NotifyType.Success)
+    {
+        <div class="alert bg-success-400 alert-styled-left success-notification" id="success-notification-div-for" style="display:none; z-index:10005;">
+            <button type="button" class="close closeSuccess">&times;</button>
+            <span>
+                @Html.Raw(msg.Message)
+                <script>
+                    $(window).load(function () {
+                        $("#success-notification-div-for").slideDown();
+                    });
+                </script>
+            </span>
+        </div>
+    }
+    else if (msg.Type == CustomEnums.NotifyType.Error)
+    {
+        <div class="alert bg-danger-400 alert-styled-left error-notification" id="error-notification-div-for" style="display:none; z-index:10005;">
+            <button type="button" class="close closeErrormsg">&times;</button>
+            <span>
+                @Html.Raw(msg.Message)
+                <script>
+
+                    $(window).load(function () {
+                        $("#error-notification-div-for").slideDown();
+                    });
+                </script>
+            </span>
+        </div>
+    }
+}
+
+<!-- success notification -->
+<div class="alert bg-success-400 alert-styled-left success-notification" id="success-notification-div" style="display:none; z-index:10005;">
+    <button type="button" class="close closeSuccess">&times;</button>
+    <span id="successMsg">
+    </span>
+</div>
+
+<!-- error notification -->
+<div class="alert bg-danger-400 alert-styled-left error-notification" id="error-notification-div" style="display:none; z-index:10005;">
+    <button type="button" class="close closeErrormsg">&times;</button>
+    <span id="errorMsg">
+    </span>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $('.closeErrormsg').click(function () { $(".error-notification").fadeOut(10); });
+        $('.closeSuccess').click(function () { $(".success-notification").fadeOut(10); });
+
+        @if (TempData["Message"] != null)
+        {
+            NotificationMessage msg = (NotificationMessage)TempData["Message"];
+            if(msg.Type == CustomEnums.NotifyType.SystemErrorMessage)
+            {
+                <text>bootbox.alert("@msg.Message")</text>
+            }
+        }
+    });
+
+    $(window).load(function () {
+        setTimeout(function () {
+            ClearMessages();
+        }, 6000);
+    });
+
+    function ClearMessages() {
+        $("#success-notification-div-for").slideUp();
+        $("#error-notification-div-for").slideUp();
+        $("#success-notification-div").slideUp();
+        $("#error-notification-div").slideUp();
+    }
+
+    function showNotification(message, type)
+    {        
+        if(type == '@CustomEnums.NotifyType.Success.GetHashCode()')
+        {
+            $('#successMsg').html(message);
+            $('#success-notification-div').show();
+            setTimeout(function () {
+                ClearMessages();
+            }, 6000);
+        }
+        else if(type == '@CustomEnums.NotifyType.Error.GetHashCode()')
+        {
+            $('#errorMsg').html(message);
+            $('#error-notification-div').show();
+            setTimeout(function () {
+                ClearMessages();
+            }, 6000);
+        }
+        else if(type == '@CustomEnums.NotifyType.SystemErrorMessage.GetHashCode()')
+        {
+            bootbox.alert(message);
+        }
+    }
+</script>
+
+

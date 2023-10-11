@@ -1,0 +1,31 @@
+﻿@*@model QuoteCalculatorAdmin.Models.VehicleViewModel*@
+
+@*@(Html.Kendo().DropDownListFor(m => m)
+                        .DataValueField("CategoryID")
+                        .DataTextField("CategoryName")
+                        .BindTo((System.Collections.IEnumerable)ViewData["categories"])
+    )*@
+@*@(Html.Kendo().DropDownList()
+        .Name("Vehicle")
+        .DataTextField("Text")
+        .DataValueField("Value")
+        .OptionLabel("Select Type...")
+        .DataSource(source =>
+        {
+            source.Read(read =>
+            {
+                read.Action("GetVehicleList", "ImportsQuote");
+            });
+        })
+)*@
+@(Html.Kendo().DropDownListFor(m => m).Name("VehicleId")
+     .DataTextField("Text")
+     .DataValueField("Value")
+     .DataSource(source =>
+     {
+         source.Read(read =>
+             {
+                 read.Action("GetVehicleList", "ImportsQuote");
+             })
+             .ServerFiltering(true);
+}))

@@ -1,0 +1,83 @@
+﻿@using QuoteCalculatorAdmin.Models
+@model SpreadSheetModel
+
+@{
+    ViewBag.Title = "Home Page";
+}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0"> @Html.Label("Upload File", new { @class = "text-bold", style = "margin-bottom:0px" })</h5>
+    </div>
+    <div class="card-body">
+        @using (Html.BeginForm("Upload", "Home", FormMethod.Post, new { @class = "form-horizontal", enctype = "multipart/form-data" }))
+        {
+            <div class="row">
+                <div class="col-lg-6 form-group">
+                    <div class="form-group">
+                        <label>Select Spreadsheet Type:</label>
+                        @Html.DropDownListFor(x => x.SpreadSheetId, new SelectList((IEnumerable<SelectListItem>)ViewBag.SpreadSheetList, "Value", "Text"), "-- Select Field --", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.SpreadSheetId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="col-lg-6  col-12">
+                    <div class="form-group">
+                        <label>Spreadsheet to upload:</label>
+                        <input type="file" class="d-block" name="file" accept=".xlsx, .csv" onchange="FileChange();" />
+                        @*@(Html.Kendo().Upload()
+                                  .Name("file")
+                                  .Validation(validation =>
+                                  {
+                                      validation.AllowedExtensions(new string[] { ".xlsx", ".csv" });
+                                  })
+                                  .HtmlAttributes(new { aria_label = "files" })
+                            )*@
+                    </div>
+                </div>
+                @if (AuthorizationHelper.CanAdd(ViewContext.RouteData.Values["Controller"].ToString()))
+                {
+                    <div class="col-xl-12 col-lg-12">
+                        <div class="form-group">
+                            <button class="btn btn-warning" type="submit" onclick="return CheckValidation();">Submit</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#menu_Home").addClass("active");
+    });
+    function CheckValidation() {
+        if ($('form').valid()) {
+            const file = $('input[type="file"]')[0].files;
+            if (file.length == 0) {
+                tostr.error('Please select a file!');
+                return false;
+            }
+            return true;
+        }
+        hideLoader();
+        return false;
+    }
+
+    function FileChange() {
+        const file = $('input[type="file"]')[0].files;
+        if (file != null) {
+            const ext = file[0].name.match(/\.([^\.]+)$/)[1];
+            switch (ext.toLowerCase()) {
+                case 'xlsx':
+                case 'csv':
+                    break;
+                default:
+                    toastr.error('Please select Excel or CSV File!');
+                    $('input[type="file"]').val('');
+                    return false;
+            }
+        }
+    }
+</script>

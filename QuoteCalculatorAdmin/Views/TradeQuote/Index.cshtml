@@ -1,0 +1,180 @@
+﻿@using QuoteCalculatorAdmin.Models
+@{
+    ViewBag.Title = "Quote Trade";
+}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Quote Trade</h5>
+        <button class="btn btn-warning" onclick="AddTrade()"><i class="icon-plus2"></i> Add Trade</button>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table id="tblTradeQuoteList" class="table dataTable nowrap" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Agent Name</th>
+                                <th>Dest Country</th>
+                                <th>Dest Code</th>
+                                <th>Service</th>
+                                <th>Volume</th>
+                                <th>Reference No</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+     var dataTableExample = $('#tblTradeQuoteList').DataTable();
+    $(document).ready(function () {
+        $("#menu_TradeQuote").addClass("active");
+        BindTradeQuoteGrid();
+    });
+    @*function BindTradeQuoteGrid() {
+        $.ajax({
+            url: '@Url.Action("GetTradeQuoteList", "TradeQuote")',
+            type: "POST",
+            data: {
+
+            },
+            dataType: "json",
+            success: GetData
+        });
+    }*@
+    function BindTradeQuoteGrid() {
+        try {
+            if (dataTableExample != 'undefined') {
+                dataTableExample.destroy();
+            }
+            dataTableExample = $('#tblTradeQuoteList').DataTable({
+                 colReorder: {
+                    enable: false
+                },
+                serverSide: true,
+                language: {
+                    'processing': '<div class="loader"></div>'
+                },
+                ajax: {
+                    url: encodeURI('@Url.Action("GetTradeQuoteList", "TradeQuote")'),
+                    type: 'POST',
+                    //data: function (d) {
+                    //    d.ImportQuoteId = 10;
+                    //}
+                },
+
+                //fixedHeader: true,
+                //fixedColumns: true,
+                "lengthMenu": [10,20, 50, 100, 200, 500],
+                "pageLength": 10,
+                "order": [],
+                //dom: 'Blfrtip',
+                "bFilter": true,
+                "aoColumns": [
+                    {
+                        "mData": "AgentName",
+                        "className": "text-left",
+                    },
+                    {
+                        "mData": "DestCountry",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "DestCode",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "StrService",
+                        "className": "text-left",
+                    },
+                    {
+                        "mData": "Volume",
+                        "className": "text-left",
+                    },
+                    {
+                        "mData": "RefNo",
+                        "className": "text-left"
+                    },
+                     {
+                         "mData": "Id",
+                         "bSortable": false,
+                        "className": "dt-center",
+                        "render": function (data, type, row, meta) {
+                            var ActionButtonEdit = '<a class="btn pr-2 edit-icon" title="Edit" href=' + "@Url.Action("AddEdit", "TradeQuote")?Id=" + row.Id +'><i class="fa-regular fa-pen-to-square"></i></a>';
+                            //var ActionButtonDelete = '<a title="Delete" href="javascript:;" onclick="DeleteBaggageQuote(' + row.Id + ')" class="ml-2 px-1"><i class="fa icon-trash text-danger"></i></a>';
+
+                            var result = '';
+
+                            result = ActionButtonEdit ;
+
+                            return result;
+                        }
+                    }
+                ],
+        });
+        $(".dataTables_length").css('clear', 'none');
+        $(".dataTables_length").css('margin-right', '20px');
+        $(".dataTables_info").css('clear', 'none');
+        $(".dataTables_info").css('padding', '0');
+    } catch (e) {
+        alert(e.message);
+    }
+    }
+    function RedirectToView(e)
+    {
+        var tr = $(e.target).closest("tr");
+        var data = this.dataItem(tr);
+        if (data != null) {
+            var urllink = '@Url.Action("AddEdit", "TradeQuote")?Id=' + data.Id;
+            window.location.href = urllink;
+        }
+    }
+
+    function DeleteBaggageQuote(Id) {
+        bootbox.confirm({
+            message: "Are You Sure You Want To Delete Quote?",
+            buttons: {
+                cancel: {
+                    label: "No",
+                    className: "btn-primary cancel"
+                },
+                confirm: {
+                    label: "Yes, Delete Quote",
+                    className: "btn-danger confirm"
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("Destroy", "Baggage")',
+                        dataType: 'json',
+                        data: { Id: Id },
+                        cache: false,
+                        async: false,
+                        success: function (data) {
+                            if (data) {
+                                //SucessMessage(data.Message);
+                                BindTradeQuoteGrid();
+                            }
+                        },
+                        error: function () {
+                            alert("We are facing some problem please try again later");
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+    function AddTrade() {
+        window.location.href ='@Url.Action("AddEdit", "TradeQuote")?Id=0';
+    }
+
+</script>

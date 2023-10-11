@@ -1,0 +1,291 @@
+﻿@using QuoteCalculatorAdmin.Data
+@using QuoteCalculatorAdmin.Common
+@model tbl_EmailTemplate
+
+@using Kendo.Mvc.UI
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="panel panel-white">
+            <div class="panel-heading">
+                <h5 class="panel-title">
+                    @if (Model.Id > 0)
+                    {
+                        <span>Edit Email Template </span>
+                    }
+                    else
+                    {
+                        <span>Add Email Template </span>
+                    }
+                </h5>
+            </div>
+
+            <div class="panel-body">
+                <div class="col-md-12">
+                    @using (Html.BeginForm("AddEdit", "EmailTemplate", FormMethod.Post, new { @class = "form-horizontal", @id = "form" }))
+                    {
+                        @Html.HiddenFor(m => m.Id)
+                        @*@Html.HiddenFor(m => m.CreatedBy)
+                            @Html.HiddenFor(m => m.CreatedOn)*@
+
+                        @*<div class="row">
+                                <div class="col-md-6">
+                                    <label>Service</label>
+                                    @Html.DropDownListFor(x => x.ServiceId, new SelectList(ViewBag.ServiceList, "Id", "Name"), "--- Select Service ---", new { @class = "form-control", @required = "required" })
+                                    @Html.ValidationMessageFor(m => m.ServiceId, "", new { @class = "text-danger help-block" })
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Subject</label>
+                                    @Html.TextBoxFor(x => x.Subject, new { @class = "form-control ", @required = "required", @id = "Subject" })
+                                    @Html.ValidationMessageFor(m => m.Subject, "", new { @class = "text-danger help-block" })
+                                </div>
+                            </div>*@
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="col-md-2">
+                                        <label>Service:</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        @(Html.Kendo().ComboBoxFor(m => m.ServiceId)
+                                                                                                                                                                .DataTextField("Name")
+                                                                                                                                                                .DataValueField("Id")
+                                                                                                                                                                .DataSource(source => source.Read(read => read.Action("GetServiceList", "Common")))
+                                                                                                                                                                //.Filter(FilterType.Contains)
+                                                                                                                                                                .Events(e => e.Change("OnchangeService"))
+
+                                                                                                                                                                .Placeholder(CommonHelper.PleaseSelect)
+                                                                                                                                                                .HtmlAttributes(new { @class = "form-control" })
+                                        )
+                                        @Html.ValidationMessageFor(m => m.ServiceId)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <div class="col-md-2">
+                                        @Html.Label("Email Subject")
+                                    </div>
+                                    <div class="col-md-8">
+                                        @(Html.Kendo().TextBoxFor(m => m.Subject).HtmlAttributes(new { @class = "form-control" }) )
+                                        @Html.ValidationMessageFor(m => m.Subject)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <p id="suggestiontext" style="color:green;"> </p>
+                                    @(Html.Kendo().Editor()
+                                                           .Name("editor")
+                                                           .Tools(tools => tools
+                                                           .Clear()
+                                                           .ViewHtml())
+                                                           .Resizable(resizable => resizable.Content(false).Toolbar(true)) )
+                                    @Html.HiddenFor(m => m.HtmlContent)
+                                    @Html.ValidationMessageFor(m => m.HtmlContent)
+                                    <p id="errorid" style="color:red;"> </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <a href="@Url.Action("Index","EmailTemplate")" class="btn k-primary">Back</a>
+                            <input type="button" class="btn k-primary" id="btnSave" value="Save" onclick="SaveEmailTemplate()" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    function SaveEmailTemplate() {
+        document.getElementById("errorid").innerHTML = "";
+        var serviceValue = $("#ServiceId").data("kendoComboBox").value();
+        if (serviceValue == 1 || serviceValue == 3 || serviceValue == 5 || serviceValue == 1012 || serviceValue == 1024) {
+            tempArray = ["CustName", "refID", "toCountry", "quoteName"];
+            //tempArray = ["title", "surname", "refID", "CarName", "fromAddress", "ToAddress", "arrivalport", "arrivaldepot", "exclusivecontainerweeks", "sharedcontainerweeks","Melbourne"];
+        }
+        else if (serviceValue == 2 || serviceValue == 6) {
+            //tempArray = ["Postcode", "OriginCountry", "City", "DestinationCountry", "Firstname", "Surname", "company", "Email", "Telephone", "Movedate", "Where did you hear of us?", "Make", "Model", "Branch", "Which year did you purchase vehicle?", "Specialrequirements", "FCLPort", "FCLprice", "GRPPort","Groupageprice"];
+            tempArray = ["refID", "fromCountry", "toCity", "toCountry", "quoteName"];
+        }
+        else if (serviceValue == 4 || serviceValue == 1011 || serviceValue == 1023) {
+            tempArray = ["refID", "fromCountry", "toCity", "toCountry", "salesRepName", "salesRepEmail"];
+        }
+        else if (serviceValue == 1003 || serviceValue == 1005 || serviceValue == 1017 || serviceValue == 1019) {
+            tempArray = ["CustName", "Guide"]
+        }
+        else if (serviceValue == 1004 || serviceValue == 1018 || serviceValue == 1020 || serviceValue == 1022 || serviceValue == 1026) {
+            tempArray = ["CustName"];
+        }
+        else if (serviceValue == 1006 || serviceValue == 1008) {
+            tempArray = ["CustName", "QuoteNo", "ToCountry"];
+        }
+        else if (serviceValue == 1007 || serviceValue == 1010) {
+            tempArray = ["CustName","IncompleteQuoteLink"];
+        }
+        else if (serviceValue == 1009 || serviceValue == 1021) {
+            tempArray = ["CustName", "salesRepName", "salesRepEmail"];
+        }
+        else if (serviceValue == 1013 || serviceValue == 1014 || serviceValue == 1015 || serviceValue == 1016 || serviceValue == 1025) {
+            tempArray = ["OTP"];
+        }
+
+        var editor = $("#editor").data("kendoEditor");
+        var srctext = editor.value();
+        if (srctext == "") {
+            document.getElementById("errorid").innerHTML = "Please insert email template";
+        }
+        else {
+            var srctext = editor.value(),
+                regex = /#(.*?)#/g,
+                m, res = [];
+
+            while (m = regex.exec(srctext))
+                res.push(m[1])         //  bind all values in res[]
+
+            if (res.length == 0) {
+                //document.getElementById("errorid").innerHTML = "No found any value";
+                $("#HtmlContent").val(editor.value());
+                $('#form').submit();
+            }
+            else {
+                var values = tempArray.filter(function (n) { return !this.has(n) }, new Set(res)); //compare two array
+
+                if (values.length != 0) {
+                    document.getElementById("errorid").innerHTML = "Please enter " + values.join(', '); //bind message in <p> tag
+                } else {
+                    $("#HtmlContent").val(editor.value());
+                    $('#form').submit();
+                }
+            }
+        }
+    }
+    $(document).ready(function (e) {
+        $('#form').kendoValidator();
+        if (@Model.Id == 0) {
+            $("#ServiceId").data("kendoComboBox").value(null);
+            $("#editor").data("kendoEditor").value(null);
+        }
+
+        if (@Model.Id > 0)   //edit time suggestion message show
+        {
+            $("#editor").data("kendoEditor").value($("#HtmlContent").val()); //bind html content in editor
+            var serviceValue = $("#ServiceId").data("kendoComboBox").value();
+            if (serviceValue == 1 || serviceValue == 3 || serviceValue == 5 || serviceValue == 1012 || serviceValue == 1024) {
+                document.getElementById("suggestiontext").innerHTML = "Email Template required values are : CustName, refID , To Country, quoteName";
+            }
+            if (serviceValue == 2 || serviceValue == 6) {
+                document.getElementById("suggestiontext").innerHTML = "Email Template required values are : refID, fromCity, fromCountry, toCity, toCountry, quoteName";
+            }
+            if (serviceValue == 4 || serviceValue == 1011 || serviceValue == 1023) {
+                document.getElementById("suggestiontext").innerHTML = "Email Template required values are : refID, fromCity, fromCountry, toCity, toCountry, salesRepName, salesRepEmail";
+            }
+            if (serviceValue == 1003 || serviceValue == 1005 || serviceValue == 1017 || serviceValue == 1019) {
+                document.getElementById("suggestiontext").innerHTML = "Email Template required values are : CustName, Guide";
+            }
+            if (serviceValue == 1004 || serviceValue == 1018 || serviceValue == 1020 || serviceValue == 1022 || serviceValue == 1026) {
+                document.getElementById("suggestiontext").innerHTML = "Email Template required values are : CustName";
+            }
+            if (serviceValue == 1006 || serviceValue == 1008) {
+                document.getElementById("suggestiontext").innerHTML = "Email Template required values are : CustomerName, Quote No, To Country";
+            }
+            if (serviceValue == 1007 || serviceValue == 1010) {
+                document.getElementById("suggestiontext").innerHTML = "Email Template required values are : CustomerName, IncompleteQuoteLink";
+            }
+            if (serviceValue == 1009 || serviceValue == 1021) {
+                document.getElementById("suggestiontext").innerHTML = "Email Template required values are : CustName, salesRepName, salesRepEmail";
+            }
+
+            else if (serviceValue == 1013 || serviceValue == 1014 || serviceValue == 1015 || serviceValue == 1016 || serviceValue == 1025) {
+                document.getElementById("suggestiontext").innerHTML = "Email Template required values are : OTP";
+            }
+            //if (serviceValue == 1) {
+            //    document.getElementById("suggestiontext").innerHTML = "Email Template required values are : title, surname, refID, CarName, fromAddress, ToAddress, arrivalport, arrivaldepot, exclusivecontainerweeks, sharedcontainerweeks, Melbourne ";
+            //}
+            //if (serviceValue == 2) {
+            //    document.getElementById("suggestiontext").innerHTML = "Email Template required values are : Postcode, OriginCountry, City, DestinationCountry, Title, Firstname, Surname, company, Email, Telephone, Movedate, Where did you hear of us?, Make, Model, Branch, Which year did you purchase vehicle?" +
+            //        ", Specialrequirements, FCLPort, FCLprice, GRPPort, Groupageprice";
+            //}
+            //if (serviceValue == 3) {
+            //    document.getElementById("suggestiontext").innerHTML = "Email Template required values are : title, surname, refID, CarName, fromAddress, ToAddress, arrivalport, arrivaldepot, exclusivecontainerweeks, sharedcontainerweeks, Melbourne ";
+            //}
+            //if (serviceValue == 4) {
+            //    document.getElementById("suggestiontext").innerHTML = "Email Template required values are : Postcode, OriginCountry, City, DestinationCountry, Title, Firstname, Surname, company, Email, Telephone, Movedate, Where did you hear of us?, Make, Model, Branch, Which year did you purchase vehicle?" +
+            //        ", Specialrequirements, FCLPort, FCLprice, GRPPort, Groupageprice";
+            //}
+            //if (serviceValue == 5) {
+            //    document.getElementById("suggestiontext").innerHTML = "Email Template required values are : title, surname, refID, CarName, fromAddress, ToAddress, arrivalport, arrivaldepot, exclusivecontainerweeks, sharedcontainerweeks, Melbourne ";
+            //}
+            //if (serviceValue == 6) {
+            //    document.getElementById("suggestiontext").innerHTML = "Email Template required values are : Postcode, OriginCountry, City, DestinationCountry, Title, Firstname, Surname, company, Email, Telephone, Movedate, Where did you hear of us?, Make, Model, Branch, Which year did you purchase vehicle?" +
+            //        ", Specialrequirements, FCLPort, FCLprice, GRPPort, Groupageprice";
+            //}
+        }
+
+
+    });
+
+    function OnchangeService() {
+        document.getElementById("suggestiontext").innerHTML = "";
+        var serviceValue = $("#ServiceId").data("kendoComboBox").value();
+
+        if (serviceValue == 1 || serviceValue == 3 || serviceValue == 5 || serviceValue == 1012 || serviceValue == 1024) {
+            document.getElementById("suggestiontext").innerHTML = "Email Template required values are : Customer Name , refID,To Country, quoteName";
+        }
+        if (serviceValue == 2 || serviceValue == 6) {
+            document.getElementById("suggestiontext").innerHTML = "Email Template required values are : refID, fromCity, fromCountry, toCity, toCountry ,quoteName";
+        }
+        if (serviceValue == 4 || serviceValue == 1011 || serviceValue == 1023) {
+            document.getElementById("suggestiontext").innerHTML = "Email Template required values are : refID, fromCity, fromCountry, toCity, toCountry ,salesRepName, salesRepEmail";
+        }
+        if (serviceValue == 1003 || serviceValue == 1005 || serviceValue == 1017 || serviceValue == 1019) {
+            document.getElementById("suggestiontext").innerHTML = "Email Template required values are : CustName, Guide";
+        }
+        if (serviceValue == 1004 || serviceValue == 1018 || serviceValue == 1020 || serviceValue == 1022 || serviceValue == 1026) {
+            document.getElementById("suggestiontext").innerHTML = "Email Template required values are : CustName";
+        }
+        if (serviceValue == 1006 || serviceValue == 1008) {
+            document.getElementById("suggestiontext").innerHTML = "Email Template required values are : CustomerName, Quote No, To Country";
+        }
+        if (serviceValue == 1007 || serviceValue == 1010) {
+            document.getElementById("suggestiontext").innerHTML = "Email Template required values are : CustomerName, IncompleteQuoteLink";
+        }
+        if (serviceValue == 1009 || serviceValue == 1021) {
+            document.getElementById("suggestiontext").innerHTML = "Email Template required values are : CustName, salesRepName, salesRepEmail";
+        }
+        else if (serviceValue == 1013 || serviceValue == 1014 || serviceValue == 1015 || serviceValue == 1016 || serviceValue == 1025) {
+            document.getElementById("suggestiontext").innerHTML = "Email Template required values are : OTP";
+        }
+        else if (serviceValue == 1017 || serviceValue == 1019) {
+            document.getElementById("suggestiontext").innerHTML = "Email Template required values are : CustName, Guide";
+        }
+        //if (serviceValue == 1  ){
+        //    document.getElementById("suggestiontext").innerHTML = "Email Template required values are : title, surname, refID, CarName, fromAddress, ToAddress, arrivalport, arrivaldepot, exclusivecontainerweeks, sharedcontainerweeks, Melbourne ";
+
+        //}
+        //if (serviceValue == 2) {
+        //    document.getElementById("suggestiontext").innerHTML = "Email Template required values are : Postcode, OriginCountry, City, DestinationCountry, Title, Firstname, Surname, company, Email, Telephone, Movedate, Where did you hear of us?, Make, Model, Branch, Which year did you purchase vehicle?"+
+        //    ", Specialrequirements, FCLPort, FCLprice, GRPPort, Groupageprice";
+        //}
+        //if (serviceValue == 3) {
+        //    document.getElementById("suggestiontext").innerHTML = "Email Template required values are : title, surname, refID, CarName, fromAddress, ToAddress, arrivalport, arrivaldepot, exclusivecontainerweeks, sharedcontainerweeks, Melbourne ";
+        //}
+        //if (serviceValue == 4) {
+        //    document.getElementById("suggestiontext").innerHTML = "Email Template required values are : Postcode, OriginCountry, City, DestinationCountry, Title, Firstname, Surname, company, Email, Telephone, Movedate, Where did you hear of us?, Make, Model, Branch, Which year did you purchase vehicle?" +
+        //        ", Specialrequirements, FCLPort, FCLprice, GRPPort, Groupageprice";
+        //}
+        //if (serviceValue == 5) {
+        //    document.getElementById("suggestiontext").innerHTML = "Email Template required values are : title, surname, refID, CarName, fromAddress, ToAddress, arrivalport, arrivaldepot, exclusivecontainerweeks, sharedcontainerweeks, Melbourne ";
+        //}
+        //if (serviceValue == 6) {
+        //    document.getElementById("suggestiontext").innerHTML = "Email Template required values are : Postcode, OriginCountry, City, DestinationCountry, Title, Firstname, Surname, company, Email, Telephone, Movedate, Where did you hear of us?, Make, Model, Branch, Which year did you purchase vehicle?" +
+        //        ", Specialrequirements, FCLPort, FCLprice, GRPPort, Groupageprice";
+        //}
+    }
+
+</script>
+

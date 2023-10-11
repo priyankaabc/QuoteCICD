@@ -1,0 +1,50 @@
+﻿@model QuoteCalculatorAdmin.Models.ImportsQuoteModel
+@{
+    ViewBag.Title = "Thank You";
+}
+<style>
+    
+
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 main-thanku-card">
+            <div class="card">
+                <div class="card-body text-center thank-youcard">
+                    <div class="row mb-5">
+                        <div class="col-md-12">
+                            <h1 class="thank-you">Thank You</h1>
+                        </div>
+                    </div>
+                    <div class="row pt-4 mb-5">
+                        <div class="col-md-12">
+                            <h1 class="text-success">
+                                The Quote is now submitted.
+                            </h1><br/>
+                            <p style="font-size:20px;line-height:30px"> Your Quote reference number is: <span class="reference-no"><b>@ViewBag.ReferenceNo</b></span></p>
+                        </div>
+                    </div>
+                   
+                    <div class="bg-white p-4 m-2" style="border-radius:5px">
+                        @if (ViewBag.IsTradeQuote != null)
+                        {
+                            <div class="row mb-3 border-bottom">
+                                <div class="col-md-12">
+                                    <h4>
+                                        <b>Total price is :</b>  @ViewBag.TotalPrice
+                                    </h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4><b>Adjusted price is :</b> @ViewBag.AdjustedPrice</h4>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

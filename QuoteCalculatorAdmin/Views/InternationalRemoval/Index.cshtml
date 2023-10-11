@@ -1,0 +1,195 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">International Removal Details</h5>
+        <a class="btn btn-warning text-right" href="@Url.Action("Edit", "InternationalRemoval")?Id=0"><i class="icon-plus2"></i> Add Quote</a>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table id="tblInternationRemoval" class="table dataTable nowrap" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Telephone</th>
+                                <th>City</th>
+                                <th>Day Schedule</th>
+                                <th>Appointment Time</th>
+                                <th>Access Code</th>
+                                <th>Reference No</th>
+                                <th>Get Quote</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+               
+            </div>            
+        </div>
+    </div>
+</div>
+<script>
+    var DataTable = $('#tblInternationRemoval').DataTable();
+    $(document).ready(function () {
+        $("#menu_InternationalRemoval").addClass("active");
+        $("#menu_QuoteDetails").children().removeClass("collapsed");
+        $("#menu_QuoteDetails").children().addClass("show");
+        $("#menu_QuoteDetails").addClass("active");
+       
+        BindInternationalRemovalGrid();
+    });
+
+    function BindInternationalRemovalGrid() {
+        try {
+            if (DataTable != 'undefined') {
+                DataTable.destroy();
+            }
+            DataTable = $('#tblInternationRemoval').DataTable({
+                colReorder: {
+                    enable: false
+                },
+                serverSide: true,
+                language: {
+                    'processing': '<div class="loader"></div>'
+                },
+                ajax: {
+                    url: encodeURI('@Url.Action("GetInternationRemovalList", "InternationalRemoval")'),
+                    type: 'POST',
+                    //data: function (d) {
+                    //    d.ImportQuoteId = 10;
+                    //}
+                },
+                "lengthMenu": [10, 20,50, 100, 200, 500],
+                "pageLength": 10,
+                "order": [],
+                //dom: 'Blfrtip',
+                "bFilter": true,
+                "aoColumns": [
+                    {
+                        "mData": "TitleName",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "Firstname",
+                        "className": "text-left "
+                    },
+                    {
+                        "mData": "Lastname",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "Email",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "Telephone",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "CityName",
+                        "className": "text-left",
+                        "render": function (data, type, row, meta) {
+                            return '<span style=" white-space: break-spaces;">' + row.CityName +'</span>';
+                        }
+                       
+                    },
+                    {
+                        "mData": "daySchedule",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "StrVideoSurveyAppointmentTime",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "AccessCode",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "ReferenceNo",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "Id",
+                        "className": "dt-center",
+                        "bSortable": false,
+                        "render": function (data, type, row, meta) {
+                            return '<a title="View Quotes" href="javascript:;" onclick="RedirectToMyQuote(\'' + row.Id + '\', \'' + row.Email + '\')" class="btn btn-link btn-sm px-1 datatable-btn text-decoration-none">View Quotes</a>';
+                        }
+                    },
+                    {
+                        "mData": "Id",
+                        "className": "dt-center",
+                        "bSortable": false,
+                        "render": function (data, type, row, meta) {
+                            let result = '';
+                            let ActionButtonEdit = '';
+                            let ActionDeleteButton = '';
+                            ActionButtonEdit = '<a title="Edit" href="@Url.Action("Edit", "InternationalRemoval")?Id=' + row.Id + '" class="btn edit-icon" ><i class="fa-regular fa-pen-to-square"></i></a>';
+                            ActionDeleteButton = '<a title="Delete" href="javascript:;" onclick="DeleteInternationalRemovalQuote(\'' + row.Id + '\')" class="btn delete-icon"><i class="fa-regular fa-trash-can"></i></a>';
+                            result = ActionButtonEdit + '&nbsp;&nbsp;&nbsp;' + ActionDeleteButton;
+                            return result;
+                        }
+                    }
+                ]
+            });
+            $(".dataTables_length").css('clear', 'none');
+            $(".dataTables_length").css('margin-right', '20px');
+            $(".dataTables_info").css('clear', 'none');
+            $(".dataTables_info").css('padding', '0');
+        } catch (e) {
+            alert(e.message);
+        }
+    }
+
+    function DeleteInternationalRemovalQuote(Id) {
+        bootbox.confirm({
+            message: "Are You Sure You Want To Delete?",
+            buttons: {
+                cancel: {
+                    label: "No",
+                    className: "btn-cancel min-auto  cancel"
+                },
+                confirm: {
+                    label: "Yes, Delete Quote",
+                    className: "btn-warning min-auto confirm"
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("DeleteInternationalRemoval", "InternationalRemoval")',
+                        dataType: 'json',
+                        data: { Id: Id },
+                        cache: false,
+                        async: false,
+                        success: function (data) {
+                            if (data && data.result) {
+                                toastr.success(data.Message);
+                                BindInternationalRemovalGrid()
+                            }
+                            else {
+                                toastr.error(data.Message);
+                            }
+                        },
+                        error: function () {
+                            toastr.error("We are facing some problem please try again later");
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+    function RedirectToMyQuote(Id, Email) {
+        window.location.href = '@Url.Action("ViewMyQuote", "InternationalRemoval")?Id=' + Id + '&email=' + Email;
+    }
+</script>

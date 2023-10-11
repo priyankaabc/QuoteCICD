@@ -1,0 +1,77 @@
+﻿@model List<QuoteCalculator.Models.SailingSchedModel>
+@{
+    ViewBag.Title = "Sailing Schedule";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@*<div class="page-breadcrumb text-center font-nr mb-2">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="#">Sailing Schedule</a></li>
+    </ul>
+</div>*@
+<h1 class="text-primary text-center mb-4"><b>Groupage Shipmment @Request.QueryString["location"]</b></h1>
+<div class="row">
+    @foreach (var sailingSchedModel in Model)
+    {
+
+        <div class="col-12">
+            <p class="text-success mt-4 mb-0"><b>@sailingSchedModel.CountryName</b></p>
+            <div class="border-bottom">
+                <ul>
+                    <li>
+                        <div class="row">
+                            <div class="col mt-2">
+                                <div class="row justify-content-between">
+                                    <div class="col-md-2"><b>Port</b></div>
+                                    <div class="col-md-3"><b>Vessel</b></div>
+                                    <div class="col-md-2"><b>Loading</b></div>
+                                    <div class="col-md-2"><b>ETA</b></div>
+                                    <div class="col-md-3"><b>Agent</b></div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        foreach (var item in sailingSchedModel.SailingSchedules)
+        {
+            <div class="col-12">
+                <ul>
+
+                    <li>
+                        <div class="row">
+                            <div class="col mt-2">
+                                <div class="row justify-content-between">
+                                    <div class="col-md-2">
+                                        <span>@item.port</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <span>@item.vessel</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span>@item.loading</span>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <span>@item.eta</span>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <span>@item.agent</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        }
+    }
+    <div class="col-md-9 col-lg-7 mt-4">
+
+    </div>
+</div>

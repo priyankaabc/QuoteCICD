@@ -1,0 +1,330 @@
+﻿@model QuoteCalculator.Service.Models.QuoteInformationModel
+@using System.Web.Configuration
+@{
+    /**/
+
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/Scripts/Common.js"></script>
+<style>
+    .custom-font {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .h5, h5 {
+        font-size: 1.3rem;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <h1 class="text-primary mb-4"><b>My Quotes</b></h1>
+            <h3 class="text-uppercase text-success mb-4"><b>BAGGAGE QUOTES</b></h3>
+        </div>
+    </div>
+    <div class="row">
+        @if (Model.bagageQuoteInfo != null && Model.bagageQuoteInfo.Count > 0)
+        {
+            for (var i = 0; i < Model.bagageQuoteInfo.Count; i++)
+            {
+                <div class="col-sm-12 quote-blocks mt-3">
+                    <div class="row">
+                        <div class="card card-white w-100">
+                            <div class="card-header">
+                                <div class="row">
+                                    @if (SessionHelper.CompanyId == 1)
+                                    {
+                                        <div class="col-lg-6 col-12">
+                                            <h5 class="mt-0 mb-0"><span>AP</span>@Model.bagageQuoteInfo[i].CustomerRefNo <span class="text-success ml-4">@Model.bagageQuoteInfo[i].CreatedDate.ToString("dd/MM/yyyy")</span></h5>
+                                        </div>
+                                    }
+                                    else if (SessionHelper.CompanyId == 2)
+                                    {
+                                        <div class="col-lg-6 col-12">
+                                            <h5 class="mt-0 mb-0"><span>PF</span>@Model.bagageQuoteInfo[i].CustomerRefNo <span class="text-success ml-4">@Model.bagageQuoteInfo[i].CreatedDate.ToString("dd/MM/yyyy")</span></h5>
+                                        </div>
+                                    }
+                                    else if (SessionHelper.CompanyId == 3)
+                                    {
+                                        <div class="col-lg-6 col-12">
+                                            <h5 class="mt-0 mb-0"><span>EI</span>@Model.bagageQuoteInfo[i].CustomerRefNo <span class="text-success ml-4">@Model.bagageQuoteInfo[i].CreatedDate.ToString("dd/MM/yyyy")</span></h5>
+                                        </div>
+                                    }
+                                    <p hidden id="localhost">@WebConfigurationManager.AppSettings["QuoteLocalHost"]</p>
+                                    <div class="col-lg-6 col-12 text-right">
+                                        <a class="btn btn-outline-primary btn-sm" href="@Url.Action("GetTermsAndConditions","Baggage",new { quoteId = Model.bagageQuoteInfo[i].Id, FromCountrycODE = Model.bagageQuoteInfo[i].FromCountry, ToCountryCode = Model.bagageQuoteInfo[i].ToCountry } )">Terms and Conditions</a>
+                                        @*<a class="btn btn-outline-primary btn-sm" onclick="MyQuoteDetails('@CommonHelper.Encode(Model.bagageQuoteInfo[i].Id.ToString())')" href="#">View quote details</a>*@
+                                        <a class="btn btn-outline-primary btn-sm" href="@Url.Action("AddEdit","Baggage",new { Id = Model.bagageQuoteInfo[i].Id} )">Edit Quote</a>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 mt-3">
+                                        <span><b>From @(string.IsNullOrEmpty(Model.bagageQuoteInfo[i].PostCode) ? @Model.bagageQuoteInfo[i].FromCity : @Model.bagageQuoteInfo[i].PostCode), @Model.bagageQuoteInfo[i].FromCountry to @(string.IsNullOrEmpty(Model.bagageQuoteInfo[i].CityName) ? @Model.bagageQuoteInfo[i].ToPostCode : @Model.bagageQuoteInfo[i].CityName), @Model.bagageQuoteInfo[i].ToCountry</b></span>
+                                        <br />
+                                        <span class="text-success mb-0 custom-font">@Model.bagageQuoteInfo[i].CartonList</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-12 px-3">
+                                        <table class="table mb-0 table-bordered border-0">
+                                            @if (Model.bagageQuoteInfo[i].BaggagePriceList.Count > 0)
+                                            {
+                                                for (var j = 0; j < Model.bagageQuoteInfo[i].BaggagePriceList.Count; j++)
+                                                {
+                                                    <tr class="quotes-list">
+                                                        <td valign="middle" width="50" class="border-0"><span class="quote-opt-no font-lg text-success">@(j + 1)</span></td>
+                                                        <td valign="middle" class="border-0"><span class="text-success" id="quotekey_@i"><b>@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName</b></span></td>
+                                                        <td valign="middle" class="border-0">
+                                                            <span class="text-success">@Model.bagageQuoteInfo[i].BaggagePriceList[j].CalcDescription </span>
+                                                            @if (Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName == "Sea Freight To Door")
+                                                            {
+                                                                <span class="text-success">(average)</span>
+                                                            }
+                                                            <span>@Model.bagageQuoteInfo[i].BaggagePriceList[j].TransitionTime</span>
+                                                        </td>
+                                                        <td valign="middle" class="border-0" style="font-size: large; font-weight: bold;"><span class="text-success">Price </span>£<span id="quotePrice_@i"> @Math.Round(Convert.ToDecimal(Model.bagageQuoteInfo[i].BaggagePriceList[j].Amount), 2, MidpointRounding.ToEven) </span></td>
+
+                                                        @if (@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName == "Air freight To Airport")
+                                                        {
+                                                            if (Model.bagageQuoteInfo[i].AirFreightToAirport == true)
+                                                            {
+                                                                <td valign="middle" width="180" class="border-0"><button title="Click here to unbook" class="btn btn-success" onclick="updateBookedStatus('@Model.bagageQuoteInfo[i].Id','@Model.bagageQuoteInfo[i].CustomerRefNo','AirFreightToAirport')"><i class="icon-check2 font-lg"></i> Booked</button></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                if (Model.bagageQuoteInfo[i].isMethodSelected == true)
+                                                                {
+                                                                    <td valign="middle" width="180" class="border-0"><button class="btn btn-warning not-allowed btnBooknow_@i" disabled><i class="icon-point-right font-lg"></i> BOOK NOW</button></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td valign="middle" width="180" class="border-0"><button class="btn btn-warning btnBooknow_@i" id="AirfreightToAirportButton" onclick="BookBaggageQuote(this,'@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName',@Model.bagageQuoteInfo[i].BaggagePriceList[j].Amount,@Model.bagageQuoteInfo[i].Id)"><i class="icon-point-right font-lg"></i> BOOK NOW</button></td>
+                                                                }
+                                                            }
+                                                        }
+                                                        @if (@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName == "Air freight To Door")
+                                                        {
+                                                            if (Model.bagageQuoteInfo[i].AirFreightToDoor == true)
+                                                            {
+                                                                <td valign="middle" width="180" class="border-0"><button title="Click here to unbook" class="btn btn-success" onclick="updateBookedStatus('@Model.bagageQuoteInfo[i].Id','@Model.bagageQuoteInfo[i].CustomerRefNo','AirFreightToDoor')"><i class="icon-check2 font-lg"></i> BOOKED</button></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                if (Model.bagageQuoteInfo[i].isMethodSelected == true)
+                                                                {
+                                                                    <td valign="middle" width="180" class="border-0"><button class="btn btn-warning not-allowed btnBooknow_@i" disabled><i class="font-lg"></i>BOOK NOW</button></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td valign="middle" width="180" class="border-0"><button class="btn btn-warning btnBooknow_@i" id="AirfreightToDoorButton" onclick="BookBaggageQuote(this,'@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName',@Model.bagageQuoteInfo[i].BaggagePriceList[j].Amount,@Model.bagageQuoteInfo[i].Id)"><i class="font-lg"></i>BOOK NOW</button></td>
+                                                                }
+                                                            }
+                                                        }
+                                                        @if (@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName == "Courier Economy To Door")
+                                                        {
+                                                            if (Model.bagageQuoteInfo[i].Courier == true)
+                                                            {
+                                                                <td valign="middle" width="180" class="border-0"><button title="Click here to unbook" class="btn btn-success" onclick="updateBookedStatus('@Model.bagageQuoteInfo[i].Id','@Model.bagageQuoteInfo[i].CustomerRefNo','Courier')"><i class="icon-check2 font-lg"></i> BOOKED</button></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                if (Model.bagageQuoteInfo[i].isMethodSelected == true)
+                                                                {
+                                                                    <td valign="middle" width="180" class="border-0"><button class="btn btn-warning not-allowed btnBooknow_@i" disabled><i class="icon-point-right font-lg"></i> BOOK NOW</button></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td valign="middle" width="180" class="border-0"><button class="btn btn-warning btnBooknow_@i" id="CourierButton" onclick="BookBaggageQuote(this,'@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName',@Model.bagageQuoteInfo[i].BaggagePriceList[j].Amount,@Model.bagageQuoteInfo[i].Id)"><i class="icon-point-right font-lg"></i> BOOK NOW</button></td>
+                                                                }
+                                                            }
+                                                        }
+
+
+                                                        @if (@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName == "Sea Freight To Door")
+                                                        {
+                                                            if (Model.bagageQuoteInfo[i].SeaFreight == true)
+                                                            {
+                                                                <td valign="middle" width="180" class="border-0"><button title="Click here to unbook" class="btn btn-success" onclick="updateBookedStatus('@Model.bagageQuoteInfo[i].Id','@Model.bagageQuoteInfo[i].CustomerRefNo','SeaFreight')"><i class="icon-check2 font-lg"></i>BOOKED</button></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                if (Model.bagageQuoteInfo[i].isMethodSelected == true)
+                                                                {
+                                                                    <td valign="middle" width="180" class="border-0"><button class="btn btn-warning not-allowed btnBooknow_@i" disabled><i class="icon-point-right font-lg"></i>BOOK NOW</button></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td valign="middle" width="180" class="border-0"><button class="btn btn-warning btnBooknow_@i" id="SeaFreightButton" onclick="BookBaggageQuote(this,'@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName',@Model.bagageQuoteInfo[i].BaggagePriceList[j].Amount,@Model.bagageQuoteInfo[i].Id)"><i class="icon-point-right font-lg"></i> BOOK NOW</button></td>
+                                                                }
+                                                            }
+                                                        }
+
+                                                        @if (@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName == "Road freight To Door")
+                                                        {
+                                                            if (Model.bagageQuoteInfo[i].RoadFreightToDoor == true)
+                                                            {
+                                                                <td valign="middle" width="180" class="border-0"><button title="Click here to unbook" class="btn btn-success" onclick="updateBookedStatus('@Model.bagageQuoteInfo[i].Id','@Model.bagageQuoteInfo[i].CustomerRefNo','RoadFreightToDoor')"><i class="icon-check2 font-lg"></i> BOOKED</button></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                if (Model.bagageQuoteInfo[i].isMethodSelected == true)
+                                                                {
+                                                                    <td valign="middle" width="180" class="border-0"><button class="btn btn-warning not-allowed btnBooknow_@i" disabled><i class="icon-point-right font-lg"></i>BOOK NOW</button></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td valign="middle" width="180" class="border-0"><button class="btn btn-warning btnBooknow_@i" id="RoadfreightToDoorButton" onclick="BookBaggageQuote(this,'@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName',@Model.bagageQuoteInfo[i].BaggagePriceList[j].Amount,@Model.bagageQuoteInfo[i].Id)"><i class="icon-point-right font-lg"></i> BOOK NOW</button></td>
+                                                                }
+                                                            }
+                                                        }
+
+                                                        @if (@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName == "Courier Express To Door")
+                                                        {
+                                                            if (Model.bagageQuoteInfo[i].CourierExpressToDoor == true)
+                                                            {
+                                                                <td valign="middle" width="180" class="border-0"><button title="Click here to unbook" class="btn btn-success" onclick="updateBookedStatus('@Model.bagageQuoteInfo[i].Id','@Model.bagageQuoteInfo[i].CustomerRefNo','CourierExpressToDoor')"><i class="icon-check2 font-lg"></i>BOOKED</button></td>
+                                                            }
+                                                            else
+                                                            {
+                                                                if (Model.bagageQuoteInfo[i].isMethodSelected == true)
+                                                                {
+                                                                    <td valign="middle" width="180" class="border-0"><button class="btn btn-warning not-allowed btnBooknow_@i" disabled><i class="icon-point-right font-lg"></i>BOOK NOW</button></td>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <td valign="middle" width="180" class="border-0"><button class="btn btn-warning btnBooknow_@i" id="CourierExpressButton" onclick="BookBaggageQuote(this,'@Model.bagageQuoteInfo[i].BaggagePriceList[j].DeliveryMethodName',@Model.bagageQuoteInfo[i].BaggagePriceList[j].Amount,@Model.bagageQuoteInfo[i].Id)"><i class="icon-point-right font-lg"></i>BOOK NOW</button></td>
+                                                                }
+                                                            }
+                                                        }
+                                                    </tr>
+                                                }
+                                            }
+                                        </table>
+                                        @if (@Model.bagageQuoteInfo[i].FromCountry == "UK")
+                                        {
+                                            <div class="row">
+                                                <div class="col-lg-6 col-12">
+                                                    <small>
+                                                        @if (Model.bagageQuoteInfo[i].HasMainCartons && Model.bagageQuoteInfo[i].DeliveryCharge == 0)
+                                                        {
+                                                            <span>Delivery of flat pack cartons to @(string.IsNullOrEmpty(Model.bagageQuoteInfo[i].PostCode) ? @Model.bagageQuoteInfo[i].FromCity : @Model.bagageQuoteInfo[i].PostCode) Free</span>
+                                                        }
+                                                        else if (Model.bagageQuoteInfo[i].HasMainCartons && Model.bagageQuoteInfo[i].DeliveryCharge > 0)
+                                                        {
+                                                            <span>Delivery of flat pack cartons to @(string.IsNullOrEmpty(Model.bagageQuoteInfo[i].PostCode) ? @Model.bagageQuoteInfo[i].FromCity : @Model.bagageQuoteInfo[i].PostCode) £@Model.bagageQuoteInfo[i].DeliveryCharge</span>
+                                                        }
+                                                        else if (!Model.bagageQuoteInfo[i].HasMainCartons && Model.bagageQuoteInfo[i].DeliveryCharge == 0)
+                                                        {
+                                                            <span>Delivery of packing materials to @(string.IsNullOrEmpty(Model.bagageQuoteInfo[i].PostCode) ? @Model.bagageQuoteInfo[i].FromCity : @Model.bagageQuoteInfo[i].PostCode) Free (if required)</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>Delivery of packing materials to @(string.IsNullOrEmpty(Model.bagageQuoteInfo[i].PostCode) ? @Model.bagageQuoteInfo[i].FromCity : @Model.bagageQuoteInfo[i].PostCode) £@Model.bagageQuoteInfo[i].DeliveryCharge (if required)</span>
+                                                        }
+                                                    </small>
+                                                </div>
+                                                <div class="col-lg-6 col-12">
+                                                    @if (@Model.bagageQuoteInfo[i].InternalNotes != null)
+                                                    {
+                                                        <span> <b> Internal Notes :</b> </span>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-6 col-12">
+                                                    <small>
+                                                        Collection of packed items from <span>@(string.IsNullOrEmpty(Model.bagageQuoteInfo[i].PostCode) ? @Model.bagageQuoteInfo[i].FromCity : @Model.bagageQuoteInfo[i].PostCode)</span>
+                                                        @if (@Model.bagageQuoteInfo[i].CollectionCharge > 0)
+                                                        {
+                                                            <span>£</span><span>@Model.bagageQuoteInfo[i].CollectionCharge</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>Free</span>
+                                                        }
+                                                    </small>
+                                                </div>
+                                                <div class="col-lg-6 col-12">
+                                                    @if (@Model.bagageQuoteInfo[i].InternalNotes != null)
+                                                    {
+                                                        <span style="white-space:pre-line"> @Model.bagageQuoteInfo[i].InternalNotes </span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        }
+
+    </div>
+</div>
+<script src="~/Scripts/Common.js"></script>
+
+<script>
+    function BookBaggageQuote(e, quotekey, quotePrice, quoteNo) {
+        bootbox.confirm("Are you sure you want to book now?", function (result) {
+            if (result) {
+                var url = '@Url.Action("BaggageQuoteCal", "Baggage")';
+                var data = {
+                            'colName': quotekey,
+                            'quotePrice': quotePrice,
+                            'quoteNo': quoteNo
+                            };
+                callwebservice(url, data, saveCompleted, false, datatypeEnum.text, typeEnum.post);
+                location.reload();
+            }
+        });
+    }
+    function saveCompleted(data) {
+        if (data == "") {
+
+        }
+    }
+
+    function MyQuoteDetails(Id) {
+        window.open($("#localhost").text() + "/Baggage/Baggage?quoteId=" + Id + "&isMyQuote=" + true, "_blank");
+    }
+
+    function updateBookedStatus(quoteId, referenceNo, deliveryMethod) {
+        bootbox.confirm("Are you sure you want to unbook?", function (result) {
+            if (result) {
+                if (@SessionHelper.CompanyId == 1) {
+                    referenceNo = 'AP' + referenceNo;
+                }
+                else if (@SessionHelper.CompanyId == 2) {
+                    referenceNo = 'PF' + referenceNo;
+                }
+                else if (@SessionHelper.CompanyId == 3) {
+                    referenceNo = 'EI' + referenceNo;
+                }
+                var url = '@Url.Action("UpdateBookStatus", "Baggage")';
+                var data = {
+                    'quoteId': quoteId,
+                    'referenceNo': referenceNo,
+                    'deliveryMethod': deliveryMethod,
+
+                };
+                callwebservice(url, data, updateStatusAfterSuccess, false, datatypeEnum.text, typeEnum.post);
+            }
+        });
+    }
+    function updateStatusAfterSuccess(data) {
+        if (data) {
+            location.reload();
+        }
+    }
+</script>

@@ -1,0 +1,466 @@
+﻿@model QuoteCalculator.Service.Models.TradeQuoteModel
+@using QuoteCalculatorAdmin.Models
+@using System.Web.Configuration
+@using Kendo.Mvc.UI
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<link href="~/Content/css/toastr.min.css" rel="stylesheet" />
+<style>
+    .trand-total-count-details-box {
+        display: flex;
+        height: 100%;
+    }
+
+    .input-fix-pound {
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+
+        .input-fix-pound .form-control {
+            height: calc(0.5em + 0.75rem + 10px);
+        }
+
+    .total-amount-amount {
+        padding: 0px;
+        width: auto;
+        display: inline-block;
+        border-radius: 4px;
+    }
+
+    .height-99 {
+        height: 99%
+    }
+
+   
+        .user-details-content .form-group {
+            margin-bottom: 0px !important;
+        }
+</style>
+
+@using (Html.BeginForm("AddEditTradeQuote", "TradeQuote", FormMethod.Post, new { @class = "custom-inputs", @Id = "TradeQuoteForm" }))
+{
+    @Html.HiddenFor(x => x.Id, new { @Name = "model.Id", @id = "TradeQuoteId" })
+    @Html.HiddenFor(x => x.RefNo, new { @Name = "model.RefNo", @id = "ReferenceNo" })
+    <input type="hidden" value="@Convert.ToInt64(ViewBag.OldQuoteId)" id="QuoteId" />
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title mb-0 d-flex align-items-center">
+                        <i class="icon-info22 position-left icon-set"></i> Trade Quote Details
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6 col-12">
+                            <div class="row">
+                                <div class="col-lg-3 col-12 form-group">
+                                    <b>Agent Name :</b>
+                                </div>
+                                <div class="col-lg-9 col-12 form-group">
+                                    <span>@Model.AgentName</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-12 form-group">
+                                    <b>Service :</b>
+                                </div>
+                                <div class="col-lg-9 col-12 form-group" id="divCustomer">
+                                    <span>@Model.StrService</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-12 form-group">
+                                    <b>Destination Town :</b>
+                                </div>
+                                <div class="col-lg-9 col-12 form-group" id="divCustomer">
+                                    <span>@Model.DestCode</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-12">
+                            <div class="user-details-content">
+                                <div class="row mb-3">
+                                    <div class="col-lg-3 col-12 form-group">
+                                        <b class="font-size15">Tariff :</b>
+                                    </div>
+                                    <div class="col-lg-9 col-12 form-group" id="divCustomer">
+                                        <div class="total-amount-amount">
+                                            <span class="font-size15">£</span>
+                                            <span id="tradeQuoteTotalTariff" class="font-size15">@Model.Tariff</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 col-12 form-group">
+                                        <b class="font-size15">Adjusted Tariff :</b>
+                                    </div>
+                                    <div class="col-lg-9 col-12 form-group" id="adjustTariffDiv">
+                                        <div class="total-amount-amount">
+                                            <span class="font-size15">£</span>
+                                            <span id="adjustedTariff" class="font-size15">@Model.Tariff</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row trand-total-count-details-box">
+                        <div class="col-lg-6 col-12">
+                            <div class="panel panel-white bg-white p-4 mb-2">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <h6 class="panel-title">
+                                            <i class="icon-coin-pound position-left icon-set"></i> <b class="text-bold pt-0" style="text-transform: uppercase;">Additional Costs</b>
+                                        </h6>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="table-responsive">
+                                            <table id="gridTradeAddtionalCost" class="table dataTable dt-responsive nowrap" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Cost</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-12">
+                            <div class="panel panel-white bg-white p-4 mb-2 height-99">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <h6 class="panel-title">
+                                            <i class="icon-coin-pound position-left icon-set"></i> <b class="text-bold pt-0" style="text-transform: uppercase;">Fees</b>
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div class="trand-total-count-details">
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <b>Handling Fee</b>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <span class="font-size15">£</span>
+                                            <span id="handlingFee">@Model.HandlingFee</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <b>Destination Fee</b>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <span class="font-size15">£</span>
+                                            <span id="destinationFee">@Model.DestinationFee</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <b>Freight Fee</b>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <span class="font-size15">£</span>
+                                            <span id="freightFee">@Model.FreightFee</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <b>Total Fee</b>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <b>
+                                                <span class="font-size15">£</span>
+                                                <span id="totalFee"></span>
+                                            </b>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <b>Profit Amount</b>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <span class="font-size15">£</span>
+                                            <span id="profitAmount"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <b>Profit %</b>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <span id="profitPercentage"></span>
+                                            <span class="font-size15">%</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            <b>Adjusted Profit %</b>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            <input id="adjustedProfit" type='number' class='rounded-pill k-textbox form-control' min='0'>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="user-details-content">
+                        <div class="row">
+                            <div class="col-lg-2 form-group">
+                                <b class="font-size15">Total Price : </b>
+                            </div>
+                            <div class="col-lg-10 form-group">
+                                <div class="total-amount-amount">
+                                    <b id="tradeQuoteTotalCost" class="font-size15">£ <span id="spntradeQuoteTotalCost">@Model.TotalCost</span></b>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-2 form-group">
+                                <b class="font-size15">Adjusted Price : </b>
+                            </div>
+                            <div class="col-lg-10 form-group">
+                                <div class="total-amount-amount">
+                                    <b id="tradeQuoteTotalAdjustedPrice" class="font-size15">£ <span id="spntradeQuoteTotalAdjustedPrice">0.00</span></b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mt-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <button class="btn btn-cancel" type="button" onclick="onBack()">Back</button>
+                                <button class="btn btn-warning" type="button" onclick="SaveTradeQuoteAdditionalCost()">Save</button>
+                                @*<a href="@Url.Action("Index", "TradeQuote")" class="btn btn-warning btn-xs legitRipple">Back</a>*@
+
+                            </div> 
+                           
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+<script src="~/Scripts/toastr.min.js"></script>
+<script type="text/javascript">
+    var dataTableExample = $('#gridTradeAddtionalCost').DataTable();
+
+    $(document).ready(function (e) {
+        BindAddtionalCostGrid();
+        $("#menu_TradeQuote").addClass("active");
+
+      //  $('#ImportsQuoteForm').kendoValidator();
+        calculateAddCost();
+        calculateAddAdjustedPrice();
+        let totalFee = parseFloat($("#destinationFee").text()) + parseFloat($("#freightFee").text()) + parseFloat($("#handlingFee").text());
+        $("#totalFee").text(totalFee.toFixed(2));
+        let profitAmount = parseFloat($("#tradeQuoteTotalTariff").text()) - totalFee;
+        $("#profitAmount").text(profitAmount.toFixed(2));
+        profitCalc();
+    });
+
+    function BindAddtionalCostGrid() {
+        var Id = $("#QuoteId").val();
+        $.ajax({
+            url: '@Url.Action("GetAdditionalCost", "TradeQuote")',
+            type: "GET",
+            data: { 'TraderQuoteId': $("#QuoteId").val() },
+            dataType: "json",
+            success: GetData
+        });
+    }
+    function GetData(data) {
+        try {
+            if (dataTableExample != 'undefined') {
+                dataTableExample.destroy();
+            }
+
+            dataTableExample = $('#gridTradeAddtionalCost').DataTable({
+                colReorder: {
+                    enable: false
+                },
+
+                fixedHeader: true,
+                fixedColumns: true,
+
+                ordering: false,
+                paging: false,
+                searching: false,
+                info: false,
+                "aaData": data.Data,
+                "aoColumns": [
+                    {
+                        "mData": "Type",
+                        "className": "text-left type-text",
+                    },
+                    {
+                        "mData": "Cost",
+                        "className": "text-left",
+                        "render": function (data, type, row, meta) {
+                            return '<div class="input-fix-pound"><span class="fix-icon">£</span><input type="number" class="form-control txtTypeCost" min="0" value="' + row.Cost + '"/></div>';
+                        }
+                    },
+                ],
+        });
+        $(".dataTables_length").css('clear', 'none');
+        $(".dataTables_length").css('margin-right', '20px');
+        $(".dataTables_info").css('clear', 'none');
+        $(".dataTables_info").css('padding', '0');
+    } catch (e) {
+        alert(e.message);
+    }
+    }
+    function additionalInfo() {
+        return {
+            TraderQuoteId: @Convert.ToInt64(ViewBag.OldQuoteId) //1
+        }
+    }
+    function SaveTradeQuoteAdditionalCost() {
+        var AdditionalCost = [];
+        var jsonAddCost;
+        let rows = $("#gridTradeAddtionalCost").dataTable().fnGetNodes();
+        for (let i = 0; i < rows.length; i++) {
+            const CostValue = $(rows[i]).find('input.form-control').val();
+            const Type = $(rows[i]).find('.type-text').text();
+            AdditionalCost.push({
+                Type: Type,
+                Cost: CostValue
+            });
+        }
+
+    //    var gridData = $("#gridTradeAddtionalCost").data("kendoGrid").dataSource.data();
+        //   var paramValue = kendo.stringify(gridData);
+
+        if (AdditionalCost.length > 0) {
+            jsonAddCost = JSON.stringify(AdditionalCost);
+            $.ajax({
+                url: '@Url.Action("SaveTradeQuoteAddCost", "TradeQuote")',
+                async: false,
+                type: 'POST',
+                data: { strData: jsonAddCost, TotalPrice: $("#spntradeQuoteTotalCost").text(), AdjustedPrice: $("#spntradeQuoteTotalAdjustedPrice").text(), Profit: $("#profitPercentage").text(), AdjustedProfit: $("#adjustedProfit").val(), TradeQuoteId: $("#TradeQuoteId").val() },
+                success: function (data) {
+                    toastr.success("Save uccessfully");
+                    var urllink = '@Url.Action("ThankYou", "TradeQuote")?ReferenceNo=' + $("#ReferenceNo").val() + '&TotalPrice=' + $("#tradeQuoteTotalCost").text() + '&AdjustedPrice=' + $("#tradeQuoteTotalAdjustedPrice").text();
+                    window.location.href = urllink;
+                    //console.log(data);
+                }
+            });
+        }
+        else {
+          //  ShowErrorMessage("No record to save.");
+            toastr.error("No record to save.")
+        }
+    }
+    $(window).on('keyup', function (e) {
+        calculateAddCost();
+        calculateAddAdjustedPrice();
+
+    });
+    function calculateAddCost() {
+
+        var totalTariff = $("#tradeQuoteTotalTariff").text();
+        let rows = $("#gridTradeAddtionalCost").dataTable().fnGetNodes();
+        for (let i = 0; i < rows.length; i++) {
+            var Cost = $(rows[i]).find('input.form-control').val();
+
+            Cost = (!Cost || Cost == '') ? 0 : Cost;
+            totalTariff = parseFloat(totalTariff) + parseFloat(Cost);
+        }
+
+
+        $("#spntradeQuoteTotalCost").text(totalTariff);
+        //$("#spntradeQuoteTotalCost").text(totalTariff.toFixed(2));
+
+    }
+
+    function calculateAddAdjustedPrice() {
+
+        var totalTariff = $("#adjustedTariff").text();
+        let rows = $("#gridTradeAddtionalCost").dataTable().fnGetNodes();
+        for (let i = 0; i < rows.length; i++) {
+            var Cost = $(rows[i]).find('input.form-control').val();
+            Cost = (!Cost || Cost == '') ? 0 : Cost;
+            totalTariff = parseFloat(totalTariff) + parseFloat(Cost);
+        }
+
+        $("#spntradeQuoteTotalAdjustedPrice").text(totalTariff);
+        //$("#spntradeQuoteTotalAdjustedPrice").text(totalTariff.toFixed(2));
+
+    }
+
+    function onBack() {
+        var urllink = '@Url.Action("AddEdit", "TradeQuote")?Id=' + $("#TradeQuoteId").val();
+        window.location.href = urllink;
+    }
+
+    $("#adjustedProfit").on('keyup', function (e) {
+        var totalFee = parseFloat($("#totalFee").text());
+        var adjustedProfit = parseFloat($("#adjustedProfit").val());
+        if (adjustedProfit) {
+            var adjustedTariff = totalFee / (1 - (adjustedProfit / 100));
+            $("#adjustedTariff").text(adjustedTariff.toFixed(2));
+        }
+        else if (adjustedProfit == 0) {
+            $("#adjustedTariff").text(0);
+        }
+        else {
+            $("#adjustedTariff").text($("#tradeQuoteTotalTariff").text());
+        }
+        calculateAddAdjustedPrice();
+    });
+    function profitCalc() {
+        var profitAmt = $("#profitAmount").text();
+        var tradeQuoteTotalTariff = $("#tradeQuoteTotalTariff").text();
+        var calc = ((parseFloat(profitAmt) * 100) / (parseFloat(tradeQuoteTotalTariff)));
+            calc = isNaN(calc) ? 0 : calc;
+        $("#profitPercentage").text(calc.toFixed(2))
+
+        $("#adjustedProfit").val(calc.toFixed(2));
+    }
+
+    function onGridLoad() {
+        calculateAddCost();
+        calculateAddAdjustedPrice();
+    }
+</script>
+<style>
+    .txtTypeCost {
+        width: 100% !important;
+        padding-left: 25px;
+        border: 1px solid;
+        border-radius: .25rem;
+    }
+
+    .font-size15 {
+        font-size: 15px;
+    }
+
+    .input-fix-pound {
+        flex: 0 0 auto;
+        position: relative;
+    }
+
+    .fix-icon {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translate(0, -50%);
+    }
+</style>

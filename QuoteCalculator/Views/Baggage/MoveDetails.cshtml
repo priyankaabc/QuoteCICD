@@ -1,0 +1,600 @@
+﻿
+@model QuoteCalculator.Models.BaggageModel
+
+@{
+    ViewBag.Title = "MoveDetaile";
+}
+<link href="~/Content/css/toastr.min.css" rel="stylesheet" />
+@*<div class="page-breadcrumb text-center font-nr mb-2">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Get a quote</a></li>
+            <li><a href="#">Baggage</a></li>
+            <li><a href="#">Move details</a></li>
+        </ul>
+    </div>*@
+<h1 class="text-primary text-center mb-4"><b>Now, tell us what you want to move?</b></h1>
+
+<div class="row justify-content-center">
+    <div class="col-md-9 my-4">
+        <ul class="progress-steps">
+            <li class="active disabled">First Step</li>
+            <li class="active">Second Step</li>
+            <li>Third Step</li>
+        </ul>
+    </div>
+    <div class="col-12 d-none d-md-block">
+        <span>Please select from our range of FREE export strength cartons in the drop down below.</span><br />
+        <span>Don’t need any cartons or have oversized items? Skip to popular other items, or enter the details yourself.</span>
+    </div>
+    @using (Html.BeginForm("MoveDetails", "Baggage", FormMethod.Post, new { @class = "custom-inputs", @Id = "myForm" }))
+    {
+        <div class="col-12 my-4 d-none d-md-block">
+            <span>Our baggage service is restricted to what one man can carry and is <b>limited to 30 kilos per item.</b></span>
+        </div>
+        <div class="col-12">
+            <div class="move-journey" id="moveJourneyAccordian">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="mb-0" id="headingOne">
+                            <button type="button" class="btn" data-toggle="collapse" data-target="#collapseOne"><span>1</span>Choose your cartons<i class="bx bx-plus"></i></button>
+                        </h2>
+                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#moveJourneyAccordian">
+                            <div class="card-body px-0 pb-0">
+                                <div class="row justify-content-center justify-content-md-start">
+                                    @if (Model.cartonList != null)
+                                    {
+
+                                        // foreach (var list in Model.cartonList)
+                                        for (int i = 0; i < Model.cartonList.Count; i++)
+                                        {
+                                            <input type="hidden" id="obj.cartonList[@i].type" name="obj.cartonList[@i].type" value="@Model.cartonList[i].type">
+                                            <input type="hidden" id="obj.cartonList[@i].id" name="obj.cartonList[@i].id" value="@Model.cartonList[i].id">
+                                            <input type="hidden" id="obj.cartonList[@i].display" name="obj.cartonList[@i].display" value="@Model.cartonList[i].display">
+                                            <input type="hidden" id="obj.cartonList[@i].description" name="obj.cartonList[@i].description" value="@Model.cartonList[i].description">
+                                            <input type="hidden" id="obj.cartonList[@i].length" name="obj.cartonList[@i].length" value="@Model.cartonList[i].length">
+                                            <input type="hidden" id="obj.cartonList[@i].breadth" name="obj.cartonList[@i].breadth" value="@Model.cartonList[i].breadth">
+                                            <input type="hidden" id="obj.cartonList[@i].height" name="obj.cartonList[@i].height" value="@Model.cartonList[i].height">
+                                            <input type="hidden" id="obj.cartonList[@i].volume" name="obj.cartonList[@i].volume" value="@Model.cartonList[i].volume">
+                                            <input type="hidden" id="obj.cartonList[@i].image" name="obj.cartonList[@i].image" value="@Model.cartonList[i].image">
+                                            <input type="hidden" id="obj.cartonList[@i].weight" name="obj.cartonList[@i].weight" value="@Model.cartonList[i].weight">
+                                            <input type="hidden" id="obj.cartonList[@i].standout" name="obj.cartonList[@i].standout" value="@Model.cartonList[i].standout">
+                                            <input type="hidden" id="obj.cartonList[@i].moveware_description" name="obj.cartonList[@i].moveware_description" value="@Model.cartonList[i].moveware_description">
+                                            <input type="hidden" id="obj.moveList[@i].Volume" name="obj.moveList[@i].Volume" value="@Model.moveList[i].Volume">
+
+                                            if (Model.cartonList[i].type == "MAIN" && Model.cartonList[i].display == 1)
+                                            {
+                                                <div class="col-6 col-md-auto mb-5">
+                                                    <div class="carton-box text-center d-flex flex-column">
+                                                        <p class="mb-2">@Model.cartonList[i].volume cu ft<br>@Model.cartonList[i].description</p>
+                                                        <div class="flex-1 my-3 d-flex justify-content-center align-items-center"><img src="~/@Model.cartonList[i].image" alt="img" /></div>
+                                                        <p class="mb-0 mt-2"><b>@Model.cartonList[i].length X @Model.cartonList[i].breadth X @Model.cartonList[i].height cm</b><a href="#"><i class="bx bxs-info-circle pl-2 text-primary" title="@Model.cartonList[i].title"></i></a></p>
+                                                        <div class="bottom-select">
+                                                            <div class="input-group rounded-pill mb-2">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text" id="basic-addon1">qty</span>
+                                                                </div>
+                                                                <input type="number" class="form-control" min="0" max="99" onchange="ChangeCartonVolumn(@i)" value="@Model.cartonList[i].quantity" id="cartonList_Quantity_@i" name="obj.cartonList[@i].quantity" placeholder="0">
+                                                            </div>
+                                                            <div class="input-group rounded-pill">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text" title="Gross weight in kg" id="basic-addon1">kg</span>
+                                                                </div>
+                                                                <input type="number" class="form-control" min="0" max="999" onchange="ChangeCartonVolumn(@i)" value="@Model.cartonList[i].UserVolume" id="cartonList_UserVolume_@i" name="obj.cartonList[@i].UserVolume" placeholder="0">
+                                                            </div>
+                                                            <div id="cartonListError_@i" class="mt-2 text-danger"></div>
+                                                            <div hidden id="cartonListError"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <h2 class="mb-0" id="headingTwo">
+                            <button type="button" class="btn collapsed" data-toggle="collapse" data-target="#collapseTwo"><span>2</span>Other popular items<i class="bx bx-plus"></i></button>
+                        </h2>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#moveJourneyAccordian">
+                            <div class="card-body">
+                                <div class="row justify-content-center justify-content-md-start">
+                                    @if (Model.cartonList != null)
+                                    {
+                                        for (int i = 0; i < Model.cartonList.Count; i++)
+                                        {
+                                            if (Model.cartonList[i].type == "EXTRA" && Model.cartonList[i].display == 1)
+                                            {
+                                                <div class="col-6 col-md-auto mb-5">
+                                                    <div class="carton-box text-center d-flex flex-column">
+                                                        <p class="mb-2">@Model.cartonList[i].description</p>
+                                                        <div class="flex-1 my-3 d-flex justify-content-center align-items-center"><img src="~/@Model.cartonList[i].image" alt="img" /></div>
+                                                        <p class="mb-0 mt-2"><b>@Model.cartonList[i].volume cu ft</b><a href="#"><i class="bx bxs-info-circle pl-2 text-primary" title="@Model.cartonList[i].title"></i></a></p>
+                                                        <div class="bottom-select">
+                                                            <div class="input-group rounded-pill mb-2">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">qty</span>
+                                                                </div>
+                                                                <input type="number" class="form-control" min="0" max="99" onchange="ChangeCartonVolumn(@i)" value="@Model.cartonList[i].quantity" id="cartonList_Quantity_@i" name="obj.cartonList[@i].quantity" placeholder="0">
+                                                            </div>
+                                                            <div class="input-group rounded-pill">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text" title="Gross weight in kg">kg</span>
+                                                                </div>
+                                                                <input type="number" class="form-control" min="0" max="999" onchange="ChangeCartonVolumn(@i)" value="@Model.cartonList[i].UserVolume" id="cartonList_UserVolume_@i" name="obj.cartonList[@i].UserVolume" placeholder="0">
+                                                            </div>
+                                                            <div id="cartonListError_@i" class="mt-2 text-danger"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <h2 class="mb-0" id="headingThree">
+                            <button type="button" class="btn collapsed" data-toggle="collapse" data-target="#collapseThree"><span>3</span>Anything else?<i class="bx bx-plus"></i></button>
+                        </h2>
+                        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#moveJourneyAccordian">
+                            <div class="card-body">
+                                <div class="NewContent">
+                                    @if (SessionHelper.newBaggageId == 0)
+                                    {
+                                        <div class="row Copyrow position-relative">
+                                            <div class="col form-group col-auto">
+                                                <b>Description</b>
+                                                <input type="text" class="form-control anythingElseBlock" id="moveListDesc_0" value="@Model.moveList[0].description" name="obj.moveList[0].description" placeholder="eg. Mirror">
+                                                <span class="text-danger" data-valmsg-for="moveListDesc_0" data-valmsg-replace="true"><span id="moveListDescerror_0" class=""></span></span>
+                                            </div>
+                                            <div class="col-auto form-group col-auto">
+                                                <b>Quantity</b>
+                                                <input type="number" class="form-control rounded-pill anythingElseBlock width-120" min="0" id="moveListQuantity_0" value="@Model.moveList[0].quantity" name="obj.moveList[0].quantity" onchange="ChangeQuantityValue(0)" placeholder="0">
+                                                <span class="text-danger" data-valmsg-for="moveListQuantity_0" data-valmsg-replace="true"><span id="moveListQuantityerror_0" class=""></span></span>
+                                            </div>
+                                            <div class="col-auto form-group col-auto">
+                                                <b>Gross Weight</b>
+                                                <input type="number" class="form-control rounded-pill width-120" min="0" id="moveListUserVolume_0" value="@Model.moveList[0].UserVolume" name="obj.moveList[0].UserVolume" onchange="ChangeQuantityValue(0)" placeholder="0">
+                                            </div>
+                                            <div hidden id="moveListError_0" class="mt-2 text-danger"></div>
+                                            <div class="col form-group col-auto">
+                                                <b>Length<small>(cm)</small></b>
+                                                <input type="number" min="0" class="form-control anythingElseBlock sm-form-control" id="moveListLength_0" value="@Model.moveList[0].length" name="obj.moveList[0].length" onchange="Changevolume(0)" placeholder="eg.30 cm">
+                                                <span class="text-danger" data-valmsg-for="moveListLength_0" data-valmsg-replace="true"><span id="moveListLengthError_0" class=""></span></span>
+                                            </div>
+                                            <div class="col form-group col-auto">
+                                                <b>Width<small>(cm)</small></b>
+                                                <input type="number" min="0" class="form-control anythingElseBlock sm-form-control" id="moveListBreadth_0" value="@Model.moveList[0].breadth" name="obj.moveList[0].breadth" onchange="Changevolume(0)" placeholder="eg.30 cm">
+                                                <span class="text-danger" data-valmsg-for="moveListBreadth_0" data-valmsg-replace="true">
+                                                    <span id="moveListBreadthError_0" class=""></span>
+                                                </span>
+                                            </div>
+                                            <div class="col form-group col-auto">
+                                                <b>Height<small>(cm)</small></b>
+                                                <input type="number" min="0" class="form-control anythingElseBlock sm-form-control" id="moveListHeight_0" value="@Model.moveList[0].height" name="obj.moveList[0].height" onchange="Changevolume(0)" placeholder="eg.30 cm">
+                                                <span class="text-danger" data-valmsg-for="moveListHeight_0" data-valmsg-replace="true"><span id="moveListHeightError_0" class=""></span></span>
+                                            </div>
+                                            <b class="move-list-volumn" id="moveListVolume_0" name="obj.moveList[0].Volume"></b>
+                                            <div class="col-auto delete-row"></div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        for (int i = 0; i < Model.moveList.Count(); i++)
+                                        {
+                                            if (Model.moveList[i].description != null)
+                                            {
+                                                <div class="row Copyrow position-relative">
+                                                    <div class="col form-group col-auto">
+                                                        <b>Description</b>
+                                                        <input type="text" class="form-control anythingElseBlock" id="moveListDesc_@i" value="@Model.moveList[i].description" name="obj.moveList[@i].description" placeholder="eg. Mirror">
+                                                        <span class="text-danger" data-valmsg-for="moveListDesc_@i" data-valmsg-replace="true"><span id="moveListDescerror_@i" class=""></span></span>
+                                                    </div>
+                                                    <div class="col-auto form-group col-auto">
+                                                        <b>Quantity</b>
+                                                        <input type="number" class="form-control rounded-pill anythingElseBlock width-120" min="0" id="moveListQuantity_@i" value="@Model.moveList[i].quantity" name="obj.moveList[@i].quantity" onchange="ChangeQuantityValue(@i)" placeholder="0">
+                                                        <span class="text-danger" data-valmsg-for="moveListQuantity_@i" data-valmsg-replace="true"><span id="moveListQuantityerror_@i" class=""></span></span>
+                                                    </div>
+                                                    <div class="col-auto form-group col-auto">
+                                                        <b>Gross Weight</b>
+                                                        <input type="number" class="form-control rounded-pill width-120" min="0" id="moveListUserVolume_@i" value="@Model.moveList[i].UserVolume" name="obj.moveList[@i].UserVolume" onchange="ChangeQuantityValue(@i)" placeholder="0">
+                                                    </div>
+                                                    <div hidden id="moveListError_@i" class="mt-2 text-danger"></div>
+                                                    <div class="col form-group col-auto">
+                                                        <b>Length<small>(cm)</small></b>
+                                                        <input type="number" min="0" class="form-control anythingElseBlock sm-form-control" id="moveListLength_@i" value="@Model.moveList[i].length" name="obj.moveList[@i].length" onchange="Changevolume(@i)" placeholder="eg.30 cm">
+                                                        <span class="text-danger" data-valmsg-for="moveListLength_@i" data-valmsg-replace="true"><span id="moveListLengthError_@i" class=""></span></span>
+                                                    </div>
+                                                    <div class="col form-group col-auto">
+                                                        <b>Width<small>(cm)</small></b>
+                                                        <input type="number" min="0" class="form-control anythingElseBlock sm-form-control" id="moveListBreadth_@i" value="@Model.moveList[i].breadth" name="obj.moveList[@i].breadth" onchange="Changevolume(@i)" placeholder="eg.30 cm">
+                                                        <span class="text-danger" data-valmsg-for="moveListBreadth_@i" data-valmsg-replace="true">
+                                                            <span id="moveListBreadthError_@i" class=""></span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="col form-group col-auto">
+                                                        <b>Height<small>(cm)</small></b>
+                                                        <input type="number" min="0" class="form-control anythingElseBlock sm-form-control" id="moveListHeight_@i" value="@Model.moveList[i].height" name="obj.moveList[@i].height" onchange="Changevolume(@i)" placeholder="eg.30 cm">
+                                                        <span class="text-danger" data-valmsg-for="moveListHeight_@i" data-valmsg-replace="true"><span id="moveListHeightError_@i" class=""></span></span>
+                                                    </div>
+                                                    <b class="move-list-volumn" id="moveListVolume_@i" name="obj.moveList[@i].Volume"></b>
+                                                    <div class="delete-row">
+                                                        <label>&nbsp;</label>
+                                                        <button class="btn" onclick='return remove(this)'><i class="bx bx-minus"></i></button>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <a href="javascript:;" onclick="IncrementRow()"><i class="bx bx-plus"></i>ADD MORE</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-5">
+            <div class="border-top pt-4">
+                <div class="row justify-content-between journey-btns">
+                    <div class="col-sm-auto order-md-12">
+                        <button type="submit" class="btn btn-warning btn-lg rounded-pill d-flex align-items-center justify-content-center" id="nextButton" onclick="return validationForm()">Next <span class="pl-2">&#x27A1;</span></button>
+                    </div>
+                    <div class="col-sm-auto order-md-1">
+                        <button type="button" class="btn btn-link btn-lg rounded-pill d-flex align-items-center justify-content-center" onclick="location.href =  '@Url.Action("Index", "Baggage", new { @baggageId = CommonHelper.Encode(@SessionHelper.BaggageId.ToString()),@isOldQuote = true })'" id="backToBaggage"><span class="pl-2" style="transform: rotate(180deg);">&#x27A1;</span> Back</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<script src="~/Scripts/toastr.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    })
+
+    var count = 1;
+    function IncrementRow() {
+        var i = 0;
+        //var i = count++;
+        var moveListCount = @Model.moveList.Where(m => m.description != null).Count();
+        //for (var i = 0; i < moveListCount; i++) {
+        if (@SessionHelper.newBaggageId == 0) {
+            i = count++;
+        } else {  i = moveListCount + 1;}
+
+
+        var Result = "<div class='row Copyrow position-relative'>"+
+            "<div class='col-auto form-group' > <b>Description</b>"+
+                      "<input type='text' class='form-control anythingElseBlock' name='obj.moveList["+ i + "].description' id='moveListDesc_" + i + "' placeholder='eg. Mirror'>"+
+                      "<span class='text-danger' data-valmsg-for='moveListDesc_" + i + "' data-valmsg-replace='true'><span id='moveListDescerror_" + i + "' class=''></span></span>"+
+                  "</div>"+
+                  "<div class='col-auto form-group'>"+
+                          "<b>Quantity</b>"+
+                          "<input type='number' min='0' class='form-control rounded-pill anythingElseBlock width-120' name='obj.moveList[" + i + "].quantity' onchange='ChangeQuantityValue(" + i + ")' id='moveListQuantity_" + i + "' placeholder='0'>"+
+                          "<span class='text-danger' data-valmsg-for='moveListQuantity_"+ i + " ' data-valmsg-replace='true'><span id='moveListQuantityerror_" + i + "' class=''></span></span>"+
+                  "</div>"+
+                  "<div class='col-auto form-group'>"+
+                      "<b>Gross Weight</b>"+
+                      "<input type='number' min='0' class='form-control rounded-pill width-120' name='obj.moveList[" + i + "].UserVolume' onchange='ChangeQuantityValue(" + i + ")' id='moveListUserVolume_" + i + "' placeholder='0'>"+
+                      "<div hidden id='moveListError_"+ i + "' class='mt-2 text-danger'></div>"+
+                  "</div>"+
+                    "<div class='col-auto form-group'>"+
+                       "<b>Length<small>(cm)</small></b>"+
+                       "<input type='number' min='0' class='form-control anythingElseBlock sm-form-control' id='moveListLength_"+ i + "' name='obj.moveList[" + i + "].length' onchange='Changevolume(" + i + ")'  placeholder='eg.30 cm'>"+
+                       "<span class='text-danger' data-valmsg-for='moveListLength_"+ i + "' data-valmsg-replace='true'>"+
+                           "<span id='moveListLengthError_"+ i + "' class=''></span>"+
+                       "</span>"+
+                   "</div>"+
+                   "<div class='col-auto form-group'>"+
+                       "<b>Width<small>(cm)</small></b>"+
+                       "<input type='number' min='0' class='form-control anythingElseBlock sm-form-control' id='moveListBreadth_"+ i + "' name='obj.moveList[" + i + "].breadth' onchange='Changevolume(" + i + ")' placeholder='eg.30 cm'>"+
+                       "<span class='text-danger' data-valmsg-for='moveListBreadth_"+ i + "' data-valmsg-replace='true'>"+
+                           "<span id='moveListBreadthError_"+ i + "' class=''></span>"+
+                       "</span>"+
+                   "</div>"+
+                   "<div class='col-auto form-group'>"+
+                       "<b>Height<small>(cm)</small></b>"+
+                       "<input type='number' min='0' class='form-control anythingElseBlock sm-form-control' id='moveListHeight_"+ i + "' name='obj.moveList[" + i + "].height' onchange='Changevolume(" + i + ")' placeholder='eg.30 cm'>"+
+                       "<span class='text-danger' data-valmsg-for='moveListHeight_"+ i + "' data-valmsg-replace='true'><span id='moveListHeightError_" + i + "' class=''></span></span>"+
+                   "</div>"+
+                    "<b class='move-list-volumn' id='moveListVolume_"+ i + "' name='obj.moveList[" + i + "].Volume'></b>"+
+                    "<div class='delete-row'>"+
+                      "<label>&nbsp;</label>"+
+                      "<button class='btn' onclick='return remove(this)'><i class='bx bx-minus'></i></button>"+
+                  "</div>"+
+             "</div>";
+
+            $('.NewContent').append(Result);
+        //}
+        //DimensionValidation();
+    }
+
+    function remove(e) {
+        $(e).parent().parent().remove()
+        return false;
+    }
+    $(document).ready(function () {
+        if (window.performance && window.performance.navigation.type == window.performance.navigation.TYPE_BACK_FORWARD) {
+            window.location.href="@Url.Action("Index", "Baggage", new { @baggageId = CommonHelper.Encode(@SessionHelper.BaggageId.ToString()) })"
+        }
+
+       var message = '@TempData["ErrorMessage"]';
+       if (message != '') {
+           toastr.error(message);
+        }
+
+        /* accordion */
+        $(".move-journey .collapse.show").each(function () {
+            $(this).prev("h2").find(".bx").addClass("bx-minus").removeClass("bx-plus");
+        });
+        $(".move-journey .collapse").on('show.bs.collapse', function () {
+            $(this).prev("h2").find(".bx").removeClass("bx-plus").addClass("bx-minus");
+        }).on('hide.bs.collapse', function () {
+            $(this).prev("h2").find(".bx").removeClass("bx-minus").addClass("bx-plus");
+        });
+
+        /* review slider */
+        var reviewSlider = $("#reviewSlider");
+        reviewSlider.owlCarousel({
+            margin: 40,
+            loop: true,
+            autoplay: true,
+            dots: false,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                992: {
+                    items: 2
+                },
+                1200: {
+                    items: 3
+                }
+            }
+        });
+        var moveListCount = '@Model.moveList.Count()';
+        for (var i = 0; i < moveListCount; i++) {
+            var length = $("#moveListLength_" + i).val() == "" ? 1 : $("#moveListLength_" + i).val();
+            var width = $("#moveListBreadth_" + i).val() == "" ? 1 : $("#moveListBreadth_" + i).val();
+            var height = $("#moveListHeight_" + i).val() == "" ? 1 : $("#moveListHeight_" + i).val();
+            var ans = ((length * width * height) / 28316.8);
+
+            $("#moveListVolume_" + i).text(ans.toFixed(0) + " Cuft");
+        }
+    });
+
+    //function DimensionValidation() {
+
+        $(".dimensions").change(function () {
+            var inputval = $(this).val();
+            var numericReg = /^[0-9]{1,9}\x[0-9]{1,9}\x[0-9]{1,9}$/;
+            if (inputval != "") {
+                if (!numericReg.test(inputval)) {
+                    $(this).next().next().text("Please enter valid dimension, eg. 30x30x30.").attr('style', 'Display: block; Color:red ; margin-bottom : -10px ').addClass("errorClass");
+                }
+                else {
+                    $(this).next().next().text("").removeClass("errorClass");
+                }
+            }
+            else {
+                $(this).next().next().text("").removeClass("errorClass");
+            }
+        });
+    //}
+
+    function validationForm() {
+        var isValid = false;
+        $('.anythingElseBlock').each(function (e) {
+            if ($("#moveListLength_" + e).val() == 0 || $("#moveListBreadth_" + e).val() == 0 || $("#moveListHeight_" + e).val() == 0 || $("#moveListDesc_" + e).val() == "" || $("#moveListQuantity_" + e).val() == 0) {
+                if ($("#moveListLength_" + e).val() != 0 || $("#moveListBreadth_" + e).val() != 0 || $("#moveListHeight_" + e).val() != 0 || $("#moveListDesc_" + e).val() != "" || $("#moveListQuantity_" + e).val() != 0) {
+                    if ($("#moveListLength_" + e).val() == 0) {
+                        $("#moveListLengthError_" + e).text('Length is required');
+                        $('#headingThree .btn').removeClass('collapsed');
+                        $('#collapseThree').addClass('show');
+                    }
+                    if ($("#moveListBreadth_" + e).val() == 0) {
+                        $("#moveListBreadthError_" + e).text('Width is required');
+                        $('#headingThree .btn').removeClass('collapsed');
+                        $('#collapseThree').addClass('show');
+                    }
+                    if ($("#moveListHeight_" + e).val() == 0) {
+                        $("#moveListHeightError_" + e).text('Height is required');
+                        $('#headingThree .btn').removeClass('collapsed');
+                        $('#collapseThree').addClass('show');
+                    }
+                    if ($("#moveListDesc_" + e).val() == "") {
+                        $("#moveListDescerror_" + e).text('Description is required');
+                        $('#headingThree .btn').removeClass('collapsed');
+                        $('#collapseThree').addClass('show');
+                    }
+                    if ($("#moveListQuantity_" + e).val() == 0) {
+                        $("#moveListQuantityerror_" + e).text('Quantity is required');
+                        $('#headingThree .btn').removeClass('collapsed');
+                        $('#collapseThree').addClass('show');
+                    }
+                    isValid = true;
+                }
+            }
+
+            $('#moveListLength_' + e).change(function () {
+                if ($('#moveListLength_' + e) != "") {
+                    $('#moveListLengthError_' + e).text('');
+                }
+            });
+            $('#moveListBreadth_' + e).change(function () {
+                if ($('#moveListBreadth_' + e) != "") {
+                    $('#moveListBreadthError_' + e).text('');
+                }
+            });
+            $('#moveListHeight_' + e).change(function () {
+                if ($('#moveListHeight_' + e) != "") {
+                    $('#moveListHeightError_' + e).text('');
+                }
+            });
+            $('#moveListDesc_' + e).change(function () {
+                if ($('#moveListDesc_' + e) != "") {
+                    $('#moveListDescerror_' + e).text('');
+                }
+            });
+            $('#moveListQuantity_' + e).change(function () {
+                if ($('#moveListQuantity_' + e) != "") {
+                    $('#moveListQuantityerror_' + e).text('');
+                }
+            });
+            isValid == true;
+
+                //return false;
+
+        })
+        if ($("#quantityvalidation").text() != "") {
+            return false;
+        }
+        if (isValid == true) {
+            return false;
+        }
+
+        if ($("#cartonListError").text() != "") {
+            bootbox.alert({
+                message: "You have entered a weight over the maximum allowed 30kg weight limit per item. Please amend weight.",
+                callback: function () {
+                }
+            })
+            return false;
+        }
+
+        var cartonCount = '@Model.cartonList.Count()';
+        var invalidQuantity = false;
+        for (var i = 0; i < cartonCount; i++) {
+            if ($("#cartonListError_" + i).text() != "") {
+                invalidQuantity = true;
+            }
+        }
+        if (invalidQuantity == true) {
+            return false;
+        }
+
+        var moveCount = '@Model.moveList.Count()';
+        var invalidQty = false;
+        for (var i = 0; i < moveCount; i++) {
+            if ($("#moveListError_" + i).text() != "") {
+                invalidQty = true;
+            }
+        }
+        if (invalidQty == true) {
+            bootbox.alert({
+                message: "You have entered a weight over the maximum allowed 30kg weight limit per item. Please amend weight.",
+                callback: function () {
+                }
+            })
+            return false;;
+        }
+    }
+    function ChangeCartonVolumn(id) {
+        var volume = $("#cartonList_UserVolume_" + id).val();
+        var quantity = $("#cartonList_Quantity_" + id).val();
+        if (volume > 0 && quantity > 0) {
+            if (volume > quantity * 30) {
+                $("#cartonListError").text("Validate false");
+                bootbox.alert({
+                    message: "You have entered a weight over the maximum allowed 30kg weight limit per item. Please amend weight.",
+                    callback: function () {
+                    }
+                })
+                $("#cartonListError_" + id).text("");
+                return false;
+            }
+            else {
+                $("#cartonListError_" + id).text("");
+                $("#cartonListError").text("");
+            }
+        }
+        else if (volume > 0) {
+            if (quantity == 0 || quantity == "") {
+                $("#cartonListError_" + id).text("Please select quantity");
+                return false;
+            } else {
+                $("#cartonListError_" + id).text("");
+            }
+        }
+    }
+
+    function Changevolume(Id) {
+        var length = $("#moveListLength_" + Id).val() == "" ? 1 : $("#moveListLength_" + Id).val();
+        var width = $("#moveListBreadth_" + Id).val() == "" ? 1 : $("#moveListBreadth_" + Id).val();
+        var height = $("#moveListHeight_" + Id).val() == "" ? 1 : $("#moveListHeight_" + Id).val();
+        var ans = ((length * width * height) / 28316.8);
+
+        $("#moveListVolume_" + Id).text(ans.toFixed(0) + " Cuft");
+    }
+
+    function ChangeQuantityValue(id) {
+        var volume = $("#cartonList_UserVolume_" + id).val();
+        var quantity = $("#cartonList_Quantity_" + id).val();
+        if (volume > 0 && quantity > 0) {
+            if (volume > quantity * 30) {
+                $("#cartonListError").text("Validate false");
+                bootbox.alert({
+                    message: "You have entered a weight over the maximum allowed 30kg weight limit per item. Please amend weight.",
+                    callback: function () {
+                    }
+                })
+                $("#cartonListError_" + id).text("");
+                return false;
+            }
+            else {
+                $("#cartonListError_" + id).text("");
+                $("#cartonListError").text("");
+            }
+        }
+        else if (volume > 0) {
+            if (quantity == 0 || quantity == "") {
+                $("#cartonListError_" + id).text("Please select quantity");
+                return false;
+            } else {
+                $("#cartonListError_" + id).text("");
+            }
+        }
+
+        var moveListQuantity = $("#moveListQuantity_" + id).val();
+        var moveListVolume = $("#moveListUserVolume_" + id).val();
+
+        if (moveListVolume > 0 && moveListQuantity > 0) {
+            if (moveListVolume > moveListQuantity * 30) {
+                $("#moveListError_" + id).text("Validate false");
+                bootbox.alert({
+                    message: "You have entered a weight over the maximum allowed 30kg weight limit per item. Please amend weight.",
+                    callback: function () {
+                    }
+                })
+                return false;
+            }
+            else {
+                $("#moveListQuantityerror_" + id).text("");
+                $("#moveListError_" + id).text("");
+            }
+        }
+        else if (moveListVolume > 0) {
+            if (moveListQuantity == 0 || moveListQuantity == "") {
+                $("#moveListQuantityerror_" + id).text('Quantity is required');
+                $('#headingThree .btn').removeClass('collapsed');
+                $('#collapseThree').addClass('show');
+                return false;
+            } else {
+
+            }
+        }
+
+
+    }
+
+</script>

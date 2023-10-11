@@ -1,0 +1,557 @@
+﻿@using QuoteCalculator.Service.Models
+@model QuoteCalculator.Service.Models.ImportsQuoteModel
+
+@using QuoteCalculatorAdmin.Models
+@using System.Web.Configuration
+@{
+    ViewBag.Title = "Edit";
+}
+<link href="~/Content/css/toastr.min.css" rel="stylesheet" />
+@using (Html.BeginForm("AddEdit", "ImportsQuote", FormMethod.Post, new { @class = "custom-inputs", @Id = "ImportsQuoteForm" }))
+{
+    @Html.HiddenFor(x => x.Id, new { @Name = "model.Id" })
+    @Html.HiddenFor(x => x.Operation, new { @Name = "model.Operation" })
+    @Html.HiddenFor(x => x.ShowDestDetail, new { @Name = "model.ShowDestDetail" })
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title mb-0 d-flex align-items-center">
+                        <i class="icon-info22 position-left icon-set"></i> Imports Quote Details
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="panel panel-white bg-white p-4 mb-2">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h6 class="panel-title">
+                                    <i class="icon-location4 position-left icon-set"></i> <b class="text-bold pt-0" style="text-transform:uppercase;">Origin Details</b>
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label><b>Type</b></label>
+                                <p class="mb-0">
+                                    <span class="custom-control custom-radio d-inline-block pr-3">
+                                        @Html.RadioButtonFor(m => m.Type, "Customer", new { id = "radioCustomer", @class = "custom-control-input" })
+                                        <label class="custom-control-label" for="radioCustomer">Customer</label>
+                                    </span>
+                                    &nbsp;
+                                    <span class="custom-control custom-radio d-inline-block">
+                                        @Html.RadioButtonFor(m => m.Type, "Agent", new { id = "radioAgent", @class = "custom-control-input" })
+                                        <label class="custom-control-label" for="radioAgent">Agent</label>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-12 form-group" id="divCustomer">
+                                <label>Customer <span class="text-danger"> *</span></label>
+                                @Html.TextBoxFor(m => m.CustomerName, new { @class = "form-control", @tabIndex = 1, @Name = "model.CustomerName", @autocomplete = "off" })
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.CustomerName" data-valmsg-replace="true"></span>
+                            </div>
+
+                            <div class="col-lg-4 col-md-6 col-12 form-group custom-d-none" id="divAgent">
+                                <label>Agent <span class="text-danger"> *</span></label>
+                                @Html.DropDownListFor(m => m.AgentId, new SelectList((IEnumerable<SelectListItem>)ViewBag.AgentList, "Value", "Text"), "-- Select Field --", new { @class = "form-control", @tabIndex = 2, @Name = "model.AgentId" })
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.AgentId" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-12 form-group">
+                                <label>Origin Country <span class="text-danger"> *</span></label>
+                                @Html.DropDownListFor(m => m.OriginCountry, new SelectList((IEnumerable<CommonModel>)ViewBag.CountryList, "Value", "Text"), "-- Select Field --", new { @class = "form-control", @tabIndex = 3, @Name = "model.OriginCountry" })
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.OriginCountry" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-12 form-group">
+                                <label>Origin Town <span class="text-danger"> *</span></label>
+                                @Html.TextBoxFor(m => m.OriginTown, new { @class = "form-control", @tabIndex = 4, @Name = "model.OriginTown", @autocomplete = "off" })
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.OriginTown" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-white bg-white p-4 mb-2">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h6 class="panel-title">
+                                    <i class="icon-wrench position-left icon-set"></i> <b class="text-bold pt-0" style="text-transform:uppercase;">POE & Service</b>
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6 col-12 form-group">
+                                <label>POE<span class="text-danger"> *</span></label>
+                                @Html.DropDownListFor(m => m.POEId, new SelectList((IEnumerable<CommonModel>)ViewBag.POEList, "Value", "Text"), "-- Select Field --", new { @class = "form-control", @tabIndex = 5, @Name = "model.POEId" })
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.POEId" data-valmsg-replace="true"></span>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 form-group">
+                                <label>Branch<span class="text-danger"> *</span></label>
+                                @Html.DropDownListFor(m => m.Branch, new SelectList((IEnumerable<CommonModel>)ViewBag.BranchList, "Value", "Text"), "-- Select Field --", new { @class = "form-control", @tabIndex = 6, @Name = "model.Branch" })
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.Branch" data-valmsg-replace="true"></span>
+                            </div>
+
+                            <div class="col-lg-3 col-md-6 col-12 form-group">
+                                <label>Service<span class="text-danger"> *</span></label>
+                                @Html.DropDownListFor(m => m.ServiceId, new SelectList((IEnumerable<SelectListItem>)ViewBag.ServiceList, "Value", "Text"), "-- Select Field --", new { @class = "form-control", @tabIndex = 7, @Name = "model.ServiceId", @onchange = "OnServiceChange();" })
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.ServiceId" data-valmsg-replace="true"></span>
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-12 form-group">
+                                <label>Container Size<span class="text-danger"> *</span></label>
+                                @Html.DropDownListFor(m => m.ContainerSizeId, new SelectList((IEnumerable<CommonModel>)ViewBag.ContainerSizeList, "Value", "Text"), "-- Select Field --", new { @class = "form-control", @tabIndex = 8, @Name = "model.ContainerSizeId" })
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.ContainerSizeId" data-valmsg-replace="true"></span>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label>Note</label>
+                                @Html.TextAreaFor(m => m.Note, new { @class = "form-control", @Name = "model.Note" })
+                                <span class="field-validation-valid text-danger" data-valmsg-for="model.Note" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+                        @if (Model != null && Model.Id > 0 && Model.ShowDestDetail)
+                        {
+                            <div class="row mt-3">
+                                <div class="col-sm-12">
+                                    <h6 class="panel-title">
+                                        <i class="icon-location3 position-left icon-set"></i> <b class="text-bold pt-0" style="text-transform: uppercase;">Destination Details</b>
+                                    </h6>
+                                </div>
+                            </div>
+                            <div class="row text-right">
+                                <div class="col-sm-12 pb-2">
+                                    <button type="button" class="btn btn-warning" onclick="ConsigneeDetailsPopup(0, this);" data-toggle="modal" data-target="#AssigneeDetailsPopup"><i class="icon-plus2"></i> Add New Consignee</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table id="tblConsigneeDetails" class="table datatable nowrap" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Consignee Name</th>
+                                                    <th>Volume/Kgs</th>
+                                                    <th>Consignment</th>
+                                                    <th>Collect From Branch</th>
+                                                    <th>Dest Address 1</th>
+                                                    <th>Dest Address  2</th>
+                                                    <th>Dest Post Code</th>
+                                                    <th>Total Cost</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 pt-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="@Url.Action("Index", "ImportsQuote" )" class="btn btn-cancel">Back</a>
+                                <button class="btn btn-warning" type="submit">Next</button>
+                            </div>
+                            @*<button class="btn btn-warning btn-xs legitRipple" type="submit" onclick="return checkvalidation();">Next</button>*@
+                        </div>
+                    </div>
+                       
+                    </div>
+                </div>
+        </div>
+    </div>
+}
+<div class="modal fade" id="AssigneeDetailsPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="h4 mb-0" id="myModalLabel">Assignee Details</span>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="divAssigneeDetailsPopup">
+                    </div>
+                </div>
+            </div>
+        </div>
+   
+</div>
+<div class="modal fade" id="AdditionalCostPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="h4 mb-0" id="myModalLabel">Additional Cost Details</span>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="divAdditionalCostPopup">
+                    </div>
+                </div>
+            </div>
+        </div>
+   
+</div>
+
+@*@(Html.Kendo().Window()
+    .Name("AdditionalCostWindow")
+    .Visible(false)
+    .Draggable(true)
+    .Modal(true)
+    .Width(660)
+    .Resizable()
+    //.Height(220)
+    .Scrollable(false)*@
+<script type="text/javascript">
+    var count;
+    var ConsigneeDataTable;
+    $(document).ready(function () {
+        $("#menu_ImportsQuote").addClass("active");
+        $("input:radio[name='Type']").change();
+        if ($("#Id").val() > 0) {
+            OnServiceChange();
+            if ('@Model.ShowDestDetail' == 'True') {
+                ConsigneeDataTable = $('#tblConsigneeDetails').DataTable();
+                BindConsigneeDetails();
+            }
+        }
+        const opparamValue = new URLSearchParams(window.location.search).get('op');
+        $("#Operation").val(opparamValue);
+    });
+
+    function edit(e) {
+        $("#TotalCost").attr("readonly", true);
+    }
+
+    $("input:radio[name='Type']").change(function () {
+        const type = $('input[name=Type]:checked').val();
+        if (type == "Customer") {
+            $('#divCustomer').show();
+            $('#divAgent').hide();
+            $('#AgentId').val('');
+            $('#CustomerName').attr('disabled', false);
+            $('#AgentId').attr('disabled', 'disabled');
+        }
+        else {
+            $('#divAgent').show();
+            $('#divCustomer').hide();
+            $('#CustomerName').val('');
+            $('#AgentId').attr("disabled", false);
+            $('#CustomerName').attr('disabled', 'disabled');
+        }
+    });
+
+    function onRequestEnd(para) {
+        if (para.type == 'update' || para.type == 'create' || para.type == 'destroy') {
+            $('#destinationDetailgrid').data('kendoGrid').dataSource.read();
+        }
+    }
+
+    $("#POEId").change(function () {
+        const POEId = $('#POEId').val();
+        if (POEId > 0) {
+            $.ajax({
+                url: '@Url.Action("GetBranchById", "ImportsQuote")',
+                type: "POST",
+                dataType: "json",
+                data: {
+                    Id: POEId
+                },
+                success: function (result) {
+                    if (result) {
+                        $('#Branch').val(result.Value);
+                    }
+                }
+            });
+        }
+    });
+    //function checkvalidation() {
+    //    const branchValue = $('#CollectFromBranch').is(":checked");
+    //    if (branchValue) {
+    //        $("#model_DestAddress1").attr("disabled", "disabled");
+    //        $("#model_DestPostcode").attr("disabled", "disabled");
+    //    }
+    //    if (!branchValue) {
+    //        $("#model_DestAddress1").attr("disabled", false);
+    //        $("#model_DestPostcode").attr("disabled", false);
+    //    }
+    //    if ($('#model_ToPostCode_error').text()) {
+    //        return false;
+    //    }
+    //    if ($("#ImportsQuoteForm").kendoValidator().data("kendoValidator").validate() != true) {
+    //        return false;
+    //    }
+    //}
+
+    function SaveImportQuoteAdditionalCost() {
+        var AdditionalCost = [];
+        var jsonAddCost;
+        var table = $("#gridImportAddtionalCost table");
+        table.find('tr').each(function (i) {
+            if (i != 0) {
+                var tds = $(this).find('td'),
+                    Type = tds.eq(0).text(),
+                    Cost = tds.eq(1).find('input').val()
+                var element = {};
+                element.Type = Type;
+                element.Cost = Cost;
+                AdditionalCost.push(element);
+            }
+        });
+
+        var gridData = $("#gridImportAddtionalCost").data("kendoGrid").dataSource.data();
+        var paramValue = kendo.stringify(gridData);
+        if (paramValue && paramValue == "[]") {
+            ShowErrorMessage("No record to save.");
+        }
+        else {
+            jsonAddCost = JSON.stringify(AdditionalCost);
+            $.ajax({
+                url: '@Url.Action("SaveImportQuoteAddCost", "ImportsQuote")',
+                async: false,
+                type: 'POST',
+                data: { strData: jsonAddCost, ImportQuoteId: $("#ImportQuoteId").val()},
+                success: function (data) {
+                    var urllink = '@Url.Action("ThankYou", "ImportsQuote")?ReferenceNo=' + data.Data;
+                    window.location.href = urllink;
+                    //console.log(data);
+                }
+            });
+        }
+    }
+
+    ////krupesh
+    //function applyCustomClass() {
+    //    var element = $(".single-line");
+    //    if (element.length > 0) {
+    //        $(".single-line").addClass("k-textbox");
+    //    }
+    //}
+    //setInterval(applyCustomClass, 500);
+    //$(".k-grid-add").click(function () {
+    //    setTimeout(function () {
+    //        var data = $("#VehicleId").data("kendoDropDownList")._data();
+    //        if (data != null && data.length > 0) {
+    //            var selectedValue = $("#VehicleId").data("kendoDropDownList")._data().filter(x => x.Text == "Effects Only")[0].Value
+    //            console.log(selectedValue);
+    //            $("#VehicleId").data("kendoDropDownList").value(selectedValue);
+    //        }
+    //    }, 1500);
+    //});
+
+    function OnServiceChange() {
+        let ServiceId = $("#ServiceId").val();
+        if (ServiceId == 3) {
+            $('#POEId, #ContainerSizeId').val('').attr('disabled', 'disabled');
+            $('span[data-valmsg-for="model.ContainerSizeId"], span[data-valmsg-for="model.POEId"]').empty();
+        }
+        else {
+            $('#POEId, #ContainerSizeId').attr('disabled', false);
+        }
+    }
+
+    function BindConsigneeDetails() {
+        if ($('#Id').val() > 0) {
+            $.ajax({
+                url: encodeURI('@Url.Action("GetDestinationDetails", "ImportsQuote")'),
+                type: "GET",
+                data: {
+                    ImportQuoteId: $('#Id').val()
+                },
+                dataType: "json",
+                success: GetConsigneeData
+            });
+        }
+    }
+
+    function GetConsigneeData(data) {
+        try {
+            if (ConsigneeDataTable != 'undefined') {
+                ConsigneeDataTable.destroy();
+            }
+            ConsigneeDataTable = $('#tblConsigneeDetails').DataTable({
+                colReorder: {
+                    enable: false
+                },
+                "lengthMenu": [10, 20,50, 100, 200, 500],
+                "pageLength": 50,
+                "order": [],
+                //dom: 'Blfrtip',
+                "bFilter": true,
+                "aaData": data.Data,
+                "aoColumns": [
+                    {
+                        "mData": "ConsigneeName",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "Kgs",
+                        "className": "text-left "
+                    },
+                    {
+                        "mData": "VehicleName",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "IsCollectFromBranch",
+                        "className": "text-left",
+                        "render": function (data, type, row, meta) {
+                            return row.IsCollectFromBranch == true ? 'Yes' : 'No'
+                        }
+                    },
+                    {
+                        "mData": "DestAddress1",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "DestAddress2",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "DestPostcode",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "AdditionalCost",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "Id",
+                        "className": "dt-center",
+                        "render": function (data, type, row, meta) {
+                            let ActionButtonEdit = '', ActionButtonDelete = '', AdditionalCost = '';
+                            ActionButtonEdit = '<a title="Edit" href="#" onclick="ConsigneeDetailsPopup(' + row.Id + ', this)" data-toggle="modal" data-target="#AssigneeDetailsPopup" class="btn mr-2 edit-icon" ><i class="fa-regular fa-pen-to-square"></i></a>';
+                            ActionButtonDelete = '<a title="Delete" href="#" onclick="DestinationDetailsDelete(' + row.Id + ')" class="btn delete-icon mr-2" ><i class="fa-regular fa-trash-can"></i></a>';
+                            AdditionalCost = '<a title="Additional Cost" href="#" onclick="AddCostView(' + row.Id + ')" data-toggle="modal" data-target="#AdditionalCostPopup" class="btn btn-link btn-cart" ><i class="fa icon-cart text-success"></i></a>';
+                            return ActionButtonEdit + ActionButtonDelete + AdditionalCost;
+                        }
+                    }
+                ]
+            });
+            $(".dataTables_length").css('clear', 'none');
+            $(".dataTables_length").css('margin-right', '20px');
+            $(".dataTables_info").css('clear', 'none');
+            $(".dataTables_info").css('padding', '0');
+        } catch (e) {
+            console.error(e.message);
+        }
+    }
+
+    function ConsigneeDetailsPopup(Id, el) {
+        
+        if (ConsigneeDataTable != 'undefined') {
+            let dataObj;
+            if (Id > 0) {
+                dataObj = ConsigneeDataTable.row($(el).closest('tr')).data();
+            }
+            else {
+                dataObj = { Id : 0 };
+            }
+            $.ajax({
+                url: '@Url.Action("GetAssigneeDetails", "ImportsQuote")',
+                async: false,
+                type: 'POST',
+                data: dataObj,
+                success: function (data) {
+                    if (data) {
+                        $('#divAssigneeDetailsPopup').html(data);
+                    }
+                }
+            });
+        }
+    }
+
+    function DestinationDetailsDelete(Id) {
+        bootbox.confirm({
+            message: 'Are You Sure You Want To Delete This Assignee?',
+            buttons: {
+                cancel: {
+                    label: 'No',
+                    className: 'btn-primary cancel'
+                },
+                confirm: {
+                    label: 'Yes, Delete Assignee',
+                    className: 'btn-danger confirm'
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("DestinationDetailsDelete", "ImportsQuote")',
+                        dataType: 'json',
+                        data: { Id: Id },
+                        cache: false,
+                        async: false,
+                        success: function (data) {
+                            if (data && data.Success) {
+                                toastr.success(data.Message);
+                                BindConsigneeDetails();
+                            }
+                            else {
+                                toastr.error(data.Message);
+                            }
+                        },
+                        error: function () {
+                            toastr.error('We are facing some problem please try again later');
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
+    function AddCostView(Id) {
+        $.ajax({
+            url: '@Url.Action("AddtionalCostView", "ImportsQuote")',
+            async: false,
+            type: 'POST',
+            data: { DestId: Id },
+            dataType: 'text',
+            success: function (data) {
+                if (data) {
+                    $('#divAdditionalCostPopup').html(data);
+                }
+            }
+        });
+    }
+</script>
+<style>
+    .txtTypeCost {
+        width: 100% !important;
+        padding-left: 25px;
+        border: 1px solid;
+        border-radius: .25rem;
+    }
+
+    .font-size15 {
+        font-size: 15px;
+    }
+
+    .input-fix-pound {
+        width: 145px;
+        flex: 0 0 auto;
+        position: relative;
+    }
+
+    .fix-icon {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translate(0, -50%);
+    }
+
+    #AssigneeDetailsPopup .modal-dialog {
+        max-width: 850px;
+    }
+
+    #AdditionalCostPopup .modal-dialog {
+        max-width: 650px;
+    }
+</style>

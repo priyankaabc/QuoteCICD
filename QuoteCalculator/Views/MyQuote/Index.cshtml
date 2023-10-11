@@ -1,0 +1,114 @@
+﻿@model QuoteCalculator.Models.MyQuoteModel
+
+@*<div class="page-breadcrumb text-center font-nr mb-2">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="#">My Quotes</a></li>
+        </ul>
+    </div>*@
+<h1 class="text-primary text-center mb-4"><b>My Quotes Login</b></h1>
+@*<p><small>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</small></p>*@
+<div class="row justify-content-center">
+    <div class="col-md-9 col-lg-7 mt-4">
+        @using (Html.BeginForm("Index", "MyQuote", FormMethod.Post, new { @class = "custom-inputs" }))
+        {
+            <div class="col-md-6 form-group">
+                <div class="row">
+                    @Html.LabelFor(x => x.EmailAddres)
+                    @Html.TextBoxFor(x => x.EmailAddres, new { @class = "form-control", @placeholder = "Type Here" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    @Html.LabelFor(x => x.OTP)
+                    @Html.TextBoxFor(x => x.OTP, new { @class = "form-control", @placeholder = "Type Here" })
+                </div>
+                <div class="col-md-6 mt-4">
+                    <div class="col-12">
+                        <span>If you do not have an Access Code then please <a href='javascript:;' onclick='SendOTPEmail();'>CLICK HERE</a></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-auto align-self-end">
+                <button class="btn btn-warning btn-lg rounded-pill d-flex align-items-center justify-content-center" onclick="GetQuoteDetails()">View Quotes<span class="pl-2">&#x27A1;</span></button>
+            </div>
+            if (SessionHelper.COMPANY_ID == 3)
+            {
+                <div class="col-12 mt-4">
+                    <span>Please<a href="http://myshipment.excess-international.com/" target="_blank"> click here</a> to view your quotes generated prior to 2nd March 2021.</span>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<script>
+    //Validation Script
+    $('form').submit(function () {
+        var Status = true;
+        var Email = $("#EmailAddres").val();
+        var OTP = $('#OTP').val();
+
+        $('#valEmail').remove();
+        $('#valOTP').remove();
+
+        if (Email == 'undefined' || Email == null || Email == '') {
+            Status = false;
+            $('#EmailAddres').after('<div style="position:inherit;"><span role="alert" id="valEmail" style="padding-bottom:0px;padding-top:0px;color: red;" data-valmsg-for="files" data-for="files" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error"><span class="k-icon k-warning"> </span>Email is required.</span></div>');
+        }
+        else {
+            var re = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+            if (!re.test(Email)) {
+                Status = false;
+                $('#EmailAddres').after('<div style="position:inherit;"><span role="alert" id="valEmail" style="padding-bottom:0px;padding-top:0px;color: red;" data-valmsg-for="files" data-for="files" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error"><span class="k-icon k-warning"> </span>Please enter valid email.</span></div>');
+            }
+        }
+
+        if (OTP == 'undefined' || OTP == null || OTP == '') {
+            Status = false;
+            $('#OTP').after('<div style="position:inherit;"><span role="alert" id="valOTP" style="padding-bottom:0px;padding-top:0px;color: red;" data-valmsg-for="files" data-for="files" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error"><span class="k-icon k-warning"> </span>Access code is required.</span></div>');
+        }
+
+        if (Status == false) {
+            return false;
+        }
+    });
+
+    function SendOTPEmail() {
+        var Email = $("#EmailAddres").val();
+        $('#valEmail').remove();
+        $('#valOTP').remove();
+
+        if (Email == 'undefined' || Email == null || Email == '') {
+            //Status = false;
+            $('#EmailAddres').after('<div style="position:inherit;"><span role="alert" id="valEmail" style="padding-bottom:0px;padding-top:0px;color: red;" data-valmsg-for="files" data-for="files" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error"><span class="k-icon k-warning"> </span>Email is required.</span></div>');
+            return false;
+        }
+        else {
+            var re = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+            if (!re.test(Email)) {
+                //Status = false;
+                $('#EmailAddres').after('<div style="position:inherit;"><span role="alert" id="valEmail" style="padding-bottom:0px;padding-top:0px;color: red;" data-valmsg-for="files" data-for="files" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error"><span class="k-icon k-warning"> </span>Please enter valid email.</span></div>');
+                return false;
+            }
+        }
+
+        $.ajax({
+            url: '@Url.Action("SendOTPEmail", "MyQuote")',
+            async:false,
+            type: 'POST',
+            data: { 'email': Email},
+            success: function (data) {
+                if (data.IsSuccess) {
+                    SucessMessage(data.Message);
+                }
+                else {
+                    ShowErrorMessage(data.Message);
+                }
+            }
+        });
+    }
+
+</script>

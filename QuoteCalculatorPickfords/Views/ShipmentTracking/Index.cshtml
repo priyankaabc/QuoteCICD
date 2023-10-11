@@ -1,0 +1,78 @@
+﻿@model QuoteCalculatorPickfords.Models.ShipmentTrackModel
+
+<div class="page-breadcrumb text-center font-nr mb-2">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="#">Shipment Tracking</a></li>
+    </ul>
+</div>
+
+<h1 class="text-primary text-center mb-4"><b>Track Your Shipment Here</b></h1>
+
+<div class="row">
+    <div class="col-md-4 col-lg-4 mt-4">
+        @using (Html.BeginForm("Index", "ShipmentTracking", FormMethod.Post, new { @class = "custom-inputs" }))
+        {
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Refrence Number")
+                    @Html.TextBoxFor(x => x.RefrenceNumber, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Consignee")
+                    @Html.TextBoxFor(x => x.Consignee, new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    <input type="button" value="View Details" id="btnSearch" class="btn btn-warning btn-lg rounded-pill align-items-center justify-content-center">
+                    <input type="reset" value="Clear" id="btnReset" class="btn btn-warning btn-lg rounded-pill align-items-center justify-content-center" style="min-width: max-content !important;">
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-8 col-lg-8" id="XMLContainer">
+        <!-- XML Details-->
+
+        <!-- /XML Details -->
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('#btnSearch').click(function () {
+            var refNumber = $('#RefrenceNumber').val();
+            var Consignee = $('#Consignee').val();
+            if (refNumber == null || refNumber == "")
+            {
+                ShowErrorMessage('Please Enter Your Refrence Number');
+                return false;
+            }
+            if (Consignee == null || Consignee == "") {
+                ShowErrorMessage('Please Enter Consignee Surname');
+                return false;
+            }
+            if ((refNumber != null && refNumber != '') && (Consignee != null && Consignee != '')) {
+                $.ajax({
+                    url: '@Url.Action("ShippingXMLDetailsPartial", "ShipmentTracking")',
+                    type: 'GET',
+                    cache: false,
+                    data: {
+                        RefNumber: refNumber,
+                        Consig: Consignee
+                    }
+                }).done(function (result) {
+                    $('#XMLContainer').html(result);
+                });
+            }
+        });
+
+        $('#btnReset').click(function () {
+            $('#XMLContainer').html("");
+        });
+    });
+</script>

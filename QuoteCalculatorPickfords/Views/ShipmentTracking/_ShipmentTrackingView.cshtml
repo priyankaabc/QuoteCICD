@@ -1,0 +1,103 @@
+﻿@model QuoteCalculatorPickfords.Models.ShipmentXMLModel
+
+<div class="row">
+    <div class="col-md-12 col-lg-12 col-xs-12 col-sm-12">
+        @if (Model.Message == "True")
+        {
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Refrence Number:", new { @class = "col-md-4" })
+                    @Html.DisplayFor(x => x.RefrenceNumber, new { @class = "form-control col-md-8" })
+                    @Html.ValidationMessageFor(x => x.RefrenceNumber)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Consignee SurName:", new { @class = "col-md-4" })
+                    @Html.DisplayFor(x => x.SurName, new { @class = "form-control col-md-8" })
+                    @Html.ValidationMessageFor(x => x.SurName)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Received Date:", new { @class = "col-md-4" })
+                    @Html.DisplayFor(x => x.ReceivedDate, new { @class = "form-control col-md-8" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Vessel/Flight Name:", new { @class = "col-md-4" })
+                    @Html.DisplayFor(x => x.VesselOrFlightName, new { @class = "form-control col-md-8" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Container/Airwaybill/Trailer/Courier Number:", new { @class = "col-md-4" })
+                    @Html.DisplayFor(x => x.ContainerOrAirwaybill, new { @class = "form-control col-md-8" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Destination Port:", new { @class = "col-md-4" })
+                    @Html.DisplayFor(x => x.DestinationPort, new { @class = "form-control col-md-8" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Estimated Time of Arrival:", new { @class = "col-md-4" })
+                    @Html.DisplayFor(x => x.EstimatedTimeofArrival, new { @class = "form-control col-md-8" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Destination Agent Name:", new { @class = "col-md-4" })
+                    @Html.DisplayFor(x => x.DestinationAgentName, new { @class = "form-control col-md-8" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Agent Telephone:", new { @class = "col-md-4" })
+                    @Html.DisplayFor(x => x.AgentTelephone, new { @class = "form-control col-md-8" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Agent Fax:", new { @class = "col-md-4" })
+                    @Html.DisplayFor(x => x.AgentFax, new { @class = "form-control col-md-8" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Agent email:", new { @class = "col-md-4" })
+                    @Html.DisplayFor(x => x.AgentEmail, new { @class = "form-control col-md-8" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    @Html.Label("Address:", new { @class = "col-md-4" })
+                    @Html.DisplayFor(x => x.Address, new { @class = "form-control col-md-8" })
+                </div>
+            </div>
+        }
+        else if (Model.Message == "False")
+        {
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    <h3 class="text-primary mb-4">
+                        Refrence Number or Consignee Surname went wrong.
+                    </h3>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-12 form-group">
+                    <h3 class="text-primary mb-4">
+                        Service is down at moment, Please try in few times.
+                    </h3>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,288 @@
+﻿@using QuoteCalculatorAdmin.Data
+@using QuoteCalculatorAdmin.Common
+@model QuoteCalculatorAdmin.Data.tbl_HeadingContent
+@{
+    Layout = null;
+}
+
+<style>
+    .k-multiselect-wrap {
+        max-height: 200px !important;
+        overflow-y: auto !important;
+    }
+</style>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @id = "HeadingContentForm" }))
+{
+<div class="k-edit-form-container">
+    @Html.HiddenFor(m => m.HeadingContentId)
+    
+    <div class="editor-label">
+        @Html.LabelFor(m => m.Heading)
+    </div>
+    <div class="editor-field">
+        @Html.Kendo().TextBoxFor(model => model.Heading).HtmlAttributes(new { style = "width: 100%;", @tabindex = 1 })
+        @Html.ValidationMessageFor(m => m.Heading)
+    </div>
+    <div class="editor-label">
+        @Html.LabelFor(m => m.HeadingContent)
+    </div>
+    <div class="editor-field">
+        @(Html.Kendo().Editor()
+                                     .Name("editor")
+                                     .Tools(tools => tools
+                                     .Clear()
+                                     .ViewHtml())
+                                     .Resizable(resizable => resizable.Content(false).Toolbar(true)) )
+        @Html.HiddenFor(m => m.HeadingContent)
+        @Html.ValidationMessageFor(m => m.HeadingContent)
+    </div>
+
+    <div class="editor-label">
+        @Html.LabelFor(m => m.FromCountryCode)
+    </div>
+    <div class="editor-field">
+        @(Html.Kendo().MultiSelectFor(x => x.FromCountryList)
+                                                                                              .HeaderTemplate("<label><input type='checkbox' id='selectAll' onclick='selectAllFromCountry()'> Select All</label>")
+                                                                                              .Placeholder("--Select--")
+                                                                                              .Height(250)
+                                                                                              //.Value(Model.CountryList)
+                                                                                              .DataTextField("country")
+                                                                                              .DataValueField("country_code")
+                                                                                              .DataSource(source => source.Read(read => read.Action("GetCountryList", "Common")))
+                                                                                              .HtmlAttributes(new { @tabindex = 3 })
+                //.Events(e=>e.Change("ShowValidation"))
+        )
+        <div id="CountryValidation"></div>
+    </div>
+
+    <div class="editor-label">
+        @Html.LabelFor(m => m.CountryCode)
+    </div>
+    <div class="editor-field">
+        @(Html.Kendo().MultiSelectFor(x => x.CountryList)
+                                                                                              .HeaderTemplate("<label><input type='checkbox' id='selectAll' onclick='selectAll()'> Select All</label>")
+                                                                                              .Placeholder("--Select--")
+                                                                                              .Height(250)
+                                                                                              //.Value(Model.CountryList)
+                                                                                              .DataTextField("country")
+                                                                                              .DataValueField("country_code")
+                                                                                              .DataSource(source => source.Read(read => read.Action("GetCountryList", "Common")))
+                                                                                              .HtmlAttributes(new { @tabindex = 4 })
+                //.Events(e=>e.Change("ShowValidation"))
+        )
+        @*@Html.ValidationMessageFor(m => m.CountryList)*@
+        <div id="CountryValidation"></div>
+    </div>
+    <div class="editor-label">
+        @Html.LabelFor(m => m.QuoteType)
+    </div>
+    <div class="editor-field">
+        @(Html.Kendo().MultiSelectFor(x => x.QuoteTypeList)
+                                                                                              .HeaderTemplate("<label><input type='checkbox' id='selectAllQuoteType' onclick='selectAllQuoteType()'> Select All</label>")
+                                                                                              .Placeholder("--Select--")
+                                                                                              .Height(250)
+                                                                                              .DataTextField("QuoteType")
+                                                                                              .DataValueField("Id")
+                                                                                              .DataSource(source => source.Read(read => read.Action("GetQuoteTypeList", "Common")))                                                                                          
+                                                                                              .HtmlAttributes(new { @tabindex = 5 })
+                //.Events(e=>e.Change("ShowValidation"))
+        )
+        @*@Html.ValidationMessageFor(m => m.CountryList)*@
+        <div id="QuoteTypeValidation"></div>
+    </div>
+    <div class="editor-label">
+        @Html.LabelFor(m => m.Company)
+    </div>
+    <div class="editor-field">
+        @(Html.Kendo().MultiSelectFor(x => x.CompanyList)
+                                                                                              .HeaderTemplate("<label><input type='checkbox' id='selectAllCompany' onclick='selectAllCompany()'> Select All</label>")
+                                                                                              .Placeholder("--Select--")
+                                                                                              .Height(250)
+                                                                                              .DataTextField("Code")
+                                                                                              .DataValueField("Id")
+                                                                                              .DataSource(source => source.Read(read => read.Action("GetCompanyList", "Common")))
+                                                                                              .HtmlAttributes(new { @tabindex = 6 })
+        )
+        <div id="CompanyValidation"></div>
+    </div>
+    <div class="editor-label">
+        @Html.LabelFor(m => m.DisplayOrder)
+    </div>
+    <div class="editor-field">
+        @Html.Kendo().TextBoxFor(m => m.DisplayOrder).HtmlAttributes(new { @tabindex = 7 })
+        @Html.ValidationMessageFor(m => m.DisplayOrder)
+    </div>
+
+    <div class="k-edit-buttons">
+        <input type="button" value="SAVE" class="k-button k-button-icontext k-primary" onclick="return Validate();" />
+        <input type="button" value="CANCEL" class="k-button k-button-icontext" onclick="ClosePopup();" />
+    </div>
+</div>
+
+}
+
+<script>
+    $(document).ready(function (e) {
+        if (@Model.HeadingContentId > 0) {         
+            $("#editor").data("kendoEditor").value($("#HeadingContent").val());
+        }else {
+            $("#editor").data("kendoEditor").value(null);
+        }
+    });
+
+    function HeadingContentSave() {
+        var editor = $("#editor").data("kendoEditor");
+        $("#HeadingContent").val(editor.value());
+          var validator = $('#HeadingContentForm').kendoValidator().data("kendoValidator");
+        if (validator.validate()) {
+            var url = '@Url.Action("Save", "ContentMaster")';
+            var paramValue = $('#HeadingContentForm').serialize();
+            callwebservice(url, paramValue, saveCompleted, false, datatypeEnum.json, typeEnum.post);
+            return true;
+        }
+        return false;
+    }
+
+    function ClosePopup() {
+        closeKendoWindow("HeadingContentWindow");
+    }
+
+    function saveCompleted(returString) {
+        if (returString.Errors != null) {
+            ClosePopup();
+            readKendoGrid('HeadingContentGrid');
+            ShowErrorMessage(returString.Errors.HeadingContent["errors"]);
+        }
+        else {
+
+            ClosePopup();
+            readKendoGrid('HeadingContentGrid');
+            SucessMessage("Data Saved Sucessffully");
+        }
+    }
+
+    function Validate()
+    {
+       var data = $("#CountryList").data("kendoMultiSelect").value();
+        var quote = $("#QuoteTypeList").data("kendoMultiSelect").value();
+        var company = $('#CompanyList').data("kendoMultiSelect").value();
+       if (data.length == 0) {
+           $('#CountryValidation').show();
+           $("#CountryValidation").html('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="DisplayOrder" data-valmsg-for="DisplayOrder" id="DisplayOrder_validationMessage" role="alert"><span class="k - icon k - i - warning"> </span> Select Country</span>');
+           return false;
+       }
+       else if (quote.length == 0) {
+           $('#QuoteTypeValidation').show();
+           $("#QuoteTypeValidation").html('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="DisplayOrder" data-valmsg-for="DisplayOrder" id="DisplayOrder_validationMessage" role="alert"><span class="k - icon k - i - warning"> </span> Select Quote Type</span>');
+           return false;
+       }
+       else if (quote.length == 0) {
+           $('#CompanyValidation').show();
+           $("#CompanyValidation").html('<span class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="DisplayOrder" data-valmsg-for="DisplayOrder" id="DisplayOrder_validationMessage" role="alert"><span class="k - icon k - i - warning"> </span> Select Quote Type</span>');
+           return false;
+       }
+       else {
+           return HeadingContentSave();
+       }
+    }
+
+    $('#CountryList').change(function () {
+        $('#CountryValidation').hide();
+    });
+    $('#QuoteTypeList').change(function () {
+        $('#QuoteTypeValidation').hide();
+    });
+    $('#CompanyList').change(function () {
+        $('#CompanyValidation').hide();
+    });
+
+    function selectAllFromCountry() {
+        var state = $("#selectAll").is(':checked');
+        var multiSelect = $("#FromCountryList").data("kendoMultiSelect");
+        if (state) {
+            var selectedValues = [];
+
+            for (var i = 0; i < multiSelect.dataSource.data().length; i++) {
+                var item = multiSelect.dataSource.data()[i];
+                selectedValues.push(item.country_code);
+            }
+            multiSelect.value(selectedValues);
+            multiSelect.trigger("change");
+            multiSelect.close();
+        }
+        else {
+            var selectedValues = [];
+            multiSelect.value(selectedValues);
+            multiSelect.close();
+            multiSelect.trigger("change");
+        }
+    }
+
+    function selectAll()
+    {
+        var state = $("#selectAll").is(':checked');
+        var multiSelect = $("#CountryList").data("kendoMultiSelect");
+        if (state) {
+            var selectedValues = [];
+
+            for (var i = 0; i < multiSelect.dataSource.data().length; i++) {
+                var item = multiSelect.dataSource.data()[i];
+                selectedValues.push(item.country_code);
+            }
+            multiSelect.value(selectedValues);
+            multiSelect.trigger("change");
+            multiSelect.close();
+        }
+        else {
+            var selectedValues = [];
+            multiSelect.value(selectedValues);
+            multiSelect.close();
+            multiSelect.trigger("change");
+        }
+    }
+
+    function selectAllQuoteType() {
+        var state = $("#selectAllQuoteType").is(':checked');
+        var multiSelect = $("#QuoteTypeList").data("kendoMultiSelect");
+        if (state) {
+            var selectedValues = [];
+
+            for (var i = 0; i < multiSelect.dataSource.data().length; i++) {
+                var item = multiSelect.dataSource.data()[i];
+                selectedValues.push(item.Id);
+            }
+            multiSelect.value(selectedValues);
+            multiSelect.trigger("change");
+            multiSelect.close();
+        }
+        else {
+            var selectedValues = [];
+            multiSelect.value(selectedValues);
+            multiSelect.close();
+            multiSelect.trigger("change");
+        }
+    }
+
+    function selectAllCompany() {
+        var state = $("#selectAllCompany").is(':checked');
+        var multiSelect = $("#CompanyList").data("kendoMultiSelect");
+        if (state) {
+            var selectedValues = [];
+
+            for (var i = 0; i < multiSelect.dataSource.data().length; i++) {
+                var item = multiSelect.dataSource.data()[i];
+                selectedValues.push(item.Id);
+            }
+            multiSelect.value(selectedValues);
+            multiSelect.trigger("change");
+            multiSelect.close();
+        }
+        else {
+            var selectedValues = [];
+            multiSelect.value(selectedValues);
+            multiSelect.close();
+            multiSelect.trigger("change");
+        }
+    }
+</script>

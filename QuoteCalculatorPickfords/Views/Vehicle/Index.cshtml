@@ -1,0 +1,666 @@
+﻿@using QuoteCalculatorPickfords.Data
+@model tbl_Vehicle
+
+<style>
+    .input-validation-error {
+        border: 1px solid #f00 !important;
+    }
+
+    .field-validation-error {
+        color: #f00 !important;
+    }
+</style>
+<div class="page-breadcrumb text-center font-nr mb-2">
+    <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Vehicle shipping</a></li>
+    </ul>
+</div>
+<h1 class="text-primary text-center mb-4"><b>Vehicle shipping</b></h1>
+<p><small class="text-warning">Please fill in the form below. All fields marked * are mandatory</small></p>
+<div class="row justify-content-center">
+    <div class="col-md-9 my-4">
+        <ul class="progress-steps">
+            <li class="active">First Step</li>
+            <li>Second Step</li>
+        </ul>
+    </div>
+
+    @using (Html.BeginForm("Index", "Vehicle", FormMethod.Post, new { @class = "custom-inputs", @id = "VehicleForm", @autocomplete = "off" }))
+    {
+    <div class="col-12 my-4">
+        <span class="text-warning"><b>Fields marked with * are mandatory</b></span>
+    </div>
+        <div class="col-12">
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <div class="row">
+                        @Html.HiddenFor(m => m.BranchId)
+                        <div class="col-auto small-fixed-input">
+                            @Html.LabelFor(x => x.TitleId)
+                            @*@Html.DropDownList("TitleId", new SelectList(ViewBag.TitleList, "Id", "TitleName")
+                                , "", new { @id = "TitleId", @class = " "  })*@
+                            @Html.DropDownListFor(x => x.TitleId, new SelectList(ViewBag.TitleList, "Id", "TitleName"), "- Select -", new { @class = "custom-selection form-control" })
+                            <p>
+                                <span class="field-validation-error" data-valmsg-for="TitleId" data-valmsg-replace="true"><span id="TitleId-error" class=""></span></span>
+                            </p>
+                        </div>
+                        <div class="col">
+                            @Html.LabelFor(x => x.Firstname)
+                            @Html.TextBoxFor(x => x.Firstname, new { @class = "form-control", @placeholder = "Type Here" })
+                            @Html.ValidationMessageFor(m => m.Firstname)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 form-group">
+                    @Html.LabelFor(x => x.Lastname)
+                    @Html.TextBoxFor(x => x.Lastname, new { @class = "form-control", @placeholder = "Type Here" })
+                    @Html.ValidationMessageFor(m => m.Lastname)
+                </div>
+                <div class="col-md-6 form-group">
+                    @Html.LabelFor(x => x.Email)
+                    @Html.TextBoxFor(x => x.Email, new { @class = "form-control", @placeholder = "Type Here" })
+                    @Html.ValidationMessageFor(m => m.Email)
+                </div>
+                <div class="col-md-6 form-group">
+                    <div class="row">
+                        <div class="col-auto small-fixed-input">
+                            <label>Country Code*</label>
+                            <select class="custom-selection form-control" name="CountryCode">
+                                <option> +1    </option>
+                                <option> +7    </option>
+                                <option> +20   </option>
+                                <option> +27   </option>
+                                <option> +30   </option>
+                                <option> +31   </option>
+                                <option> +32   </option>
+                                <option> +33   </option>
+                                <option> +34   </option>
+                                <option> +36   </option>
+                                <option> +39   </option>
+                                <option> +40   </option>
+                                <option> +41   </option>
+                                <option> +43   </option>
+                                <option selected> +44   </option>
+                                <option> +45   </option>
+                                <option> +46   </option>
+                                <option> +47   </option>
+                                <option> +48   </option>
+                                <option> +49   </option>
+                                <option> +51   </option>
+                                <option> +52   </option>
+                                <option> +53   </option>
+                                <option> +54   </option>
+                                <option> +55   </option>
+                                <option> +56   </option>
+                                <option> +57   </option>
+                                <option> +58   </option>
+                                <option> +60   </option>
+                                <option> +61   </option>
+                                <option> +62   </option>
+                                <option> +63   </option>
+                                <option> +64   </option>
+                                <option> +65   </option>
+                                <option> +66   </option>
+                                <option> +81   </option>
+                                <option> +82   </option>
+                                <option> +84   </option>
+                                <option> +86   </option>
+                                <option> +90   </option>
+                                <option> +91   </option>
+                                <option> +92   </option>
+                                <option> +93   </option>
+                                <option> +94   </option>
+                                <option> +95   </option>
+                                <option> +98   </option>
+                                <option> +212  </option>
+                                <option> +213  </option>
+                                <option> +216  </option>
+                                <option> +218  </option>
+                                <option> +220  </option>
+                                <option> +221  </option>
+                                <option> +222  </option>
+                                <option> +223  </option>
+                                <option> +224  </option>
+                                <option> +225  </option>
+                                <option> +226  </option>
+                                <option> +227  </option>
+                                <option> +228  </option>
+                                <option> +229  </option>
+                                <option> +230  </option>
+                                <option> +231  </option>
+                                <option> +232  </option>
+                                <option> +233  </option>
+                                <option> +234  </option>
+                                <option> +235  </option>
+                                <option> +236  </option>
+                                <option> +237  </option>
+                                <option> +238  </option>
+                                <option> +239  </option>
+                                <option> +240  </option>
+                                <option> +241  </option>
+                                <option> +242  </option>
+                                <option> +243  </option>
+                                <option> +244  </option>
+                                <option> +245  </option>
+                                <option> +246  </option>
+                                <option> +247  </option>
+                                <option> +248  </option>
+                                <option> +249  </option>
+                                <option> +250  </option>
+                                <option> +251  </option>
+                                <option> +252  </option>
+                                <option> +253  </option>
+                                <option> +254  </option>
+                                <option> +255  </option>
+                                <option> +256  </option>
+                                <option> +257  </option>
+                                <option> +258  </option>
+                                <option> +260  </option>
+                                <option> +261  </option>
+                                <option> +262  </option>
+                                <option> +263  </option>
+                                <option> +264  </option>
+                                <option> +265  </option>
+                                <option> +266  </option>
+                                <option> +267  </option>
+                                <option> +268  </option>
+                                <option> +269  </option>
+                                <option> +284  </option>
+                                <option> +290  </option>
+                                <option> +291  </option>
+                                <option> +297  </option>
+                                <option> +298  </option>
+                                <option> +299  </option>
+                                <option> +345  </option>
+                                <option> +350  </option>
+                                <option> +351  </option>
+                                <option> +352  </option>
+                                <option> +353  </option>
+                                <option> +354  </option>
+                                <option> +355  </option>
+                                <option> +356  </option>
+                                <option> +357  </option>
+                                <option> +358  </option>
+                                <option> +359  </option>
+                                <option> +370  </option>
+                                <option> +371  </option>
+                                <option> +372  </option>
+                                <option> +373  </option>
+                                <option> +374  </option>
+                                <option> +375  </option>
+                                <option> +376  </option>
+                                <option> +378  </option>
+                                <option> +380  </option>
+                                <option> +381  </option>
+                                <option> +385  </option>
+                                <option> +386  </option>
+                                <option> +387  </option>
+                                <option> +389  </option>
+                                <option> +420  </option>
+                                <option> +421  </option>
+                                <option> +423  </option>
+                                <option> +473  </option>
+                                <option> +500  </option>
+                                <option> +501  </option>
+                                <option> +502  </option>
+                                <option> +503  </option>
+                                <option> +504  </option>
+                                <option> +505  </option>
+                                <option> +506  </option>
+                                <option> +507  </option>
+                                <option> +508  </option>
+                                <option> +509  </option>
+                                <option> +591  </option>
+                                <option> +592  </option>
+                                <option> +593  </option>
+                                <option> +594  </option>
+                                <option> +595  </option>
+                                <option> +596  </option>
+                                <option> +597  </option>
+                                <option> +598  </option>
+                                <option> +599  </option>
+                                <option> +670  </option>
+                                <option> +671  </option>
+                                <option> +672  </option>
+                                <option> +673  </option>
+                                <option> +674  </option>
+                                <option> +675  </option>
+                                <option> +676  </option>
+                                <option> +677  </option>
+                                <option> +678  </option>
+                                <option> +679  </option>
+                                <option> +680  </option>
+                                <option> +681  </option>
+                                <option> +682  </option>
+                                <option> +683  </option>
+                                <option> +684  </option>
+                                <option> +685  </option>
+                                <option> +686  </option>
+                                <option> +687  </option>
+                                <option> +688  </option>
+                                <option> +689  </option>
+                                <option> +690  </option>
+                                <option> +691  </option>
+                                <option> +692  </option>
+                                <option> +767  </option>
+                                <option> +809  </option>
+                                <option> +850  </option>
+                                <option> +852  </option>
+                                <option> +853  </option>
+                                <option> +855  </option>
+                                <option> +856  </option>
+                                <option> +869  </option>
+                                <option> +876  </option>
+                                <option> +880  </option>
+                                <option> +886  </option>
+                                <option> +960  </option>
+                                <option> +961  </option>
+                                <option> +962  </option>
+                                <option> +963  </option>
+                                <option> +964  </option>
+                                <option> +965  </option>
+                                <option> +966  </option>
+                                <option> +967  </option>
+                                <option> +968  </option>
+                                <option> +971  </option>
+                                <option> +972  </option>
+                                <option> +973  </option>
+                                <option> +974  </option>
+                                <option> +975  </option>
+                                <option> +976  </option>
+                                <option> +977  </option>
+                                <option> +993  </option>
+                                <option> +994  </option>
+                                <option> +995  </option>
+                                <option> +996  </option>
+                                <option> +1 340</option>
+                                <option> +1 670</option>
+                                <option> +1 787</option>
+                                <option> +1 868</option>
+
+                            </select>
+                        </div>
+                        <div class="col">
+                            @Html.LabelFor(x => x.Telephone)
+                            @Html.TextBoxFor(x => x.Telephone, new { @class = "form-control", @placeholder = "Type Here", @onkeypress = "return isNumberKey(event)" })
+                            @Html.ValidationMessageFor(m => m.Telephone)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 my-4">
+            <h5 class="text-success"><b>Your move</b></h5>
+        </div>
+        <div class="col-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-12 form-group">
+                            @Html.LabelFor(m => m.FromCountryName)
+                            <input type="text" class="form-control valid" value="United Kingdom" aria-invalid="false" readonly="">
+                            @*@Html.DropDownListFor(x => x.FromCountryId, new SelectList(ViewBag.SelectedCountryList, "Id", "CountryName"), new { @class = "custom-selection form-control" })
+                                @Html.ValidationMessageFor(m => m.FromCountryId)*@
+                        </div>
+                        <div class="col-12 form-group">
+                            @Html.LabelFor(x => x.PostCode)
+                            @Html.TextBoxFor(x => x.PostCode, new { @class = "form-control", @onblur = "CheckValidPostCode()" })
+                            <span class="text-danger" id="isPostCodeValid">Please enter valid post code</span>
+                            <span class="field-validation-error" data-valmsg-for="PostCode" data-valmsg-replace="true"><span id="PostCode-error" class=""></span></span>
+
+                            @*@Html.TextBoxFor(x => x.PostCode, new { @class = "form-control" })*@
+                            @*@Html.ValidationMessageFor(m => m.PostCode)*@
+                            @*@if (ViewBag.BranchPostCode == 0)
+                                {
+                                    <span class="text-danger">Please enter valid Post Code</span>
+                                }*@
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-12 form-group">
+                            <div>
+                                @Html.LabelFor(m => m.ToCountryCode)
+                                @Html.DropDownListFor(x => x.ToCountryCode, new SelectList(ViewBag.CountryList, "country_code", "country"), "- Select -", new { @class = "custom-selection form-control", @placeholder = "Type Here" })
+                                @*@Html.ValidationMessageFor(m => m.ToCountryCode)*@
+                            </div>
+                            <span class="field-validation-error" data-valmsg-for="ToCountryCode" data-valmsg-replace="true"><span id="ToCountryCode-error" class=""></span></span>
+                        </div>
+                        <div class="col-12 form-group">
+                            <div>
+                                @Html.LabelFor(m => m.CityName)
+                                <select id="MovingToCityId" name="CityName" class="custom-selection form-control"></select>
+                                @*@Html.ValidationMessageFor(m => m.CityName)*@
+                            </div>
+                            <span class="field-validation-error" data-valmsg-for="CityName" data-valmsg-replace="true"><span id="CityName-error" class=""></span></span>
+                        </div>
+                        <div class="col-10 col-md-8 form-group">
+                            @Html.LabelFor(x => x.EstimatedMoveDate)
+                            <div class="input-group date" id='EstimatedMoveDate'>
+                                <input type="text" name="EstimatedMoveDate" class="form-control" placeholder="dd/mm/yyyy">
+                                <div class="input-group-append input-group-addon">
+                                    <span class="input-group-text"><i class="bx bx-calendar-alt font-md"></i></span>
+                                </div>
+                            </div>
+                            @*@Html.ValidationMessageFor(m => m.EstimatedMoveDate)*@
+                            <span class="d-block field-validation-error" data-valmsg-for="EstimatedMoveDate" data-valmsg-replace="true"><span id="EstimatedMoveDate-error" class=""></span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 my-4">
+            <h5 class="text-success"><b>Your vehicle</b></h5>
+        </div>
+        <div class="col-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-12 form-group">
+                            <div>
+                                @Html.LabelFor(m => m.VehicleType)
+                                @Html.DropDownListFor(x => x.VehicleType, new SelectList(ViewBag.VehicleTypeList, "Id", "TypeName"), new { @class = "custom-selection form-control", @placeholder = "Type Here" })
+                                @*@Html.ValidationMessageFor(m => m.VehicleType)*@
+                            </div>
+                            <span class="field-validation-error" data-valmsg-for="VehicleType" data-valmsg-replace="true"><span id="VehicleType-error" class=""></span></span>
+                        </div>
+                        <div class="col-12 form-group">
+                            <div>
+                                @Html.LabelFor(m => m.VehicleMakeName)
+                                @Html.DropDownListFor(x => x.VehicleMakeName, new SelectList(ViewBag.VehicleMakeList, "MakeName", "MakeName"), "- Select -", new { @class = "custom-selection form-control", @placeholder = "Type Here"@*, @Id = "VehiclemakeId"*@})
+                                @*@Html.ValidationMessageFor(m => m.VehicleMakeName)*@
+                            </div>
+                            <span class="field-validation-error" data-valmsg-for="VehicleMakeName" data-valmsg-replace="true"><span id="VehicleMakeName-error" class=""></span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-12 form-group mt-md-4 pt-md-3">
+                            <div class="custom-check">
+                                <input type="checkbox" class="styled" name="IsOwnedCar"
+                                       id="IsOwnedCar" onclick="isOwnedCar();">
+                                <label for="IsOwnedCar">
+                                    I've owned the car for at least 1 year 
+                                    <i class="bx bx-info-circle text-primary"></i>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-12 form-group">
+                            <div>
+                                @Html.LabelFor(m => m.VehicleModelName)
+                                <select id="VehicleModelId" name="VehicleModelName" class="custom-selection form-control"></select>
+                            </div>
+                            <span class="field-validation-error" data-valmsg-for="VehicleModelName" data-valmsg-replace="true"><span id="VehicleModelName-error" class=""></span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 my-4">
+            <h5 class="text-success"><b>Special requirements:</b></h5>
+        </div>
+        <div class="col-12">
+            @Html.TextAreaFor(x => x.SpecialRequirement, new { @class = "form-control col-6", @rows = 4, @placeholder = "If your vehicle is not present in the drop-down list or you wish to ship a motorcycle, motor home or commercial vehicle, then please advise the make and model of your vehicle here." })
+        </div>
+        <div class="col-sm-10 col-md-8 col-lg-6 my-5">
+            <div class="custom-check">
+                <input type="checkbox" name="IsConditionApply"
+                       id="IsConditionApply" onclick="isPrivacyTerms();">
+                <label for="IsConditionApply"> <a href="https://www.anglopacific.co.uk/privacy_policy.htm" target="_blank">Privacy Terms &amp; Conditions*</a></label>
+                <p>
+                    <span class="field-validation-error" data-valmsg-for="IsConditionApply" data-valmsg-replace="true"><span id="IsConditionApply-error" class=""></span></span>
+                </p>
+            </div>
+        </div>
+        @*<div class="col-12">
+                <p class="mb-2"><b>Choose another option?</p>
+                <ul class="option-links">
+                    <li><a href="#">Book a home survey</a></li>
+                    <li>|</li>
+                    <li><a href="#">Book a video survey</a></li>
+                    <li>|</li>
+                    <li><a href="#">Baggage Only</a></li>
+                </ul>
+            </div>*@
+        <div class="col-12 mt-5">
+            <div class="border-top pt-4">
+                <div class="row justify-content-between">
+                    <div class="col-sm-auto">
+                        @*<button class="btn btn-secondary btn-lg rounded-pill d-flex align-items-center justify-content-center"><span class="pl-2" style="transform: rotate(180deg);">&#x27A1;</span> Back</button>*@
+                    </div>
+                    @*<div class="col-sm text-center">
+                            <p class="mb-0 text-danger text-uppercase">Attention</p>
+                            <p>No option has been selected above. Plesae select one to countinue.</p>
+                        </div>*@
+                    <div class="col-sm-auto">
+                        <button type="submit" onsubmit="testing();" class="btn btn-warning btn-lg rounded-pill d-flex align-items-center justify-content-center">Next <span class="pl-2">&#x27A1;</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+  
+    $(document).ready(function (e) {
+        var url = window.location.href;
+        var country = url.substring(url.lastIndexOf('?') + 1);
+        if (country != null) {
+            var countryCode = country.split('=')[1];
+            $("Select[id='ToCountryCode']").val(countryCode);
+            OnToCountryCodeChange();
+        }
+
+        $("#isPostCodeValid").hide();
+        $("#termsAndConditions").hide();
+        //$('select option:first-child').attr("disabled", "disabled");
+       
+    })
+
+
+    $(function () {
+        $('#EstimatedMoveDate').datepicker({
+            format: 'dd/mm/yyyy',
+            startDate: new Date()
+        }).on('change', function () {
+            $('.datepicker').hide();
+        });
+    });
+
+    // Validation Script
+    $('form').submit(function () {
+        var toCountry = $('#ToCountryCode').val();
+        var VehicleType = $('#VehicleType').val();
+        var VehicleMakeName = $('#VehicleMakeName').val();
+        var EstimatedMoveDate = $('#EstimatedMoveDate > input').val();
+        var IsConditionApply = $('#IsConditionApply').val();
+        var TitleId = $('#TitleId').val();
+        var date = new Date(EstimatedMoveDate.split("/").reverse().join("-"));
+        var isValidEstimtedDate = false;
+        if (new Date(date.setHours(00, 00, 00, 00)) < new Date().setHours(00, 00, 00, 00)) {
+            isValidEstimtedDate = true;
+        }
+        if (toCountry == "" || VehicleType == "" || VehicleMakeName == "" || EstimatedMoveDate == "" || IsConditionApply == "on" || IsConditionApply == "false" || TitleId == "" || isValidEstimtedDate == true) {
+            if (toCountry == "") {
+                $('#ToCountryCode').next().addClass('input-validation-error');
+                $('#ToCountryCode-error').text('To Country is Required.');
+
+            }
+            //if (CityName == undefined) {
+            //    $('#MovingToCityId').next().addClass('input-validation-error');
+            //    $('#CityName-error').text('To Country is Required.');
+
+            //}
+            if (VehicleType == "") {
+                $('#VehicleType').next().addClass('input-validation-error');
+                $('#VehicleType-error').text('Vehicle Type is Required.');
+
+            }
+            if (VehicleMakeName == "") {
+                $('#VehicleMakeName').next().addClass('input-validation-error');
+                $('#VehicleMakeName-error').text('Vehicle make is Required.');
+
+            }
+            if (EstimatedMoveDate == "") {
+                $('#EstimatedMoveDate').addClass('input-validation-error');
+                $('#EstimatedMoveDate-error').text('Estimated move date is Required.');
+            }
+            if (isValidEstimtedDate == true) {                
+                $('#EstimatedMoveDate').addClass('input-validation-error');
+                $('#EstimatedMoveDate-error').text('Estimated Move date must be in future.');
+            }
+            if (IsConditionApply == "on" || IsConditionApply == "false") {
+                $('#IsConditionApply-error').text('Please accept privacy terms.');
+            }
+            if (TitleId == "") {
+                $('#TitleId').next().addClass('input-validation-error');
+                $('#TitleId-error').text('Title is Required.');
+            }
+            //if (VehicleModelName == undefined) {
+            //    $('#VehicleModelId').next().addClass('input-validation-error');
+            //    $('#VehicleModelName-error').text('Vehicle Model Name is Required.');
+
+            //}
+            return false;
+        }
+
+        //if (EstimatedMoveDate != "") {
+
+        //}
+        //if ($("#isPostCodeValid").text() != "") {
+        //    return false;
+        //}
+            if ($("#IsConditionApply").val() != "true") {
+                $("#termsAndConditions").show();
+                return false;
+            }
+    });
+
+    $('#ToCountryCode').change(function () {
+        $('#ToCountryCode').next().removeClass('input-validation-error');
+        $('#ToCountryCode-error').text('');
+    });
+    //$('#CityName').change(function () {
+    //    $('#MovingToCityId').next().removeClass('input-validation-error');
+    //    $('#CityName-error').text('');
+    //});
+    $('#VehicleType').change(function () {
+        $('#VehicleType').next().removeClass('input-validation-error');
+        $('#VehicleType-error').text('');
+    });
+    $('#VehicleMakeName').change(function () {
+        $('#VehicleMakeName').next().removeClass('input-validation-error');
+        $('#VehicleMakeName-error').text('');
+    });
+    $('#EstimatedMoveDate').change(function () {
+        $('#EstimatedMoveDate').removeClass('input-validation-error');
+        $('#EstimatedMoveDate-error').text('');
+    });
+    $('#IsConditionApply').change(function () {
+        $('#IsConditionApply-error').text('');
+    });
+    $('#TitleId').change(function () {
+        $('#TitleId').next().removeClass('input-validation-error');
+        $('#TitleId-error').text('');
+    });
+
+    //$('#VehicleModelName').change(function () {
+    //    $('#VehicleModelId').next().removeClass('input-validation-error');
+    //    $('#VehicleModelName-error').text('');
+    //});
+
+    // Validation Script End
+
+    function isOwnedCar() {
+        var isOwnedCar = $('#IsOwnedCar').is(":checked");
+        $("#IsOwnedCar").val(isOwnedCar);
+    }
+    //function isPrivacyTerms() {
+    //    var isPrivacyTerms = $('#IsConditionApply').is(":checked");
+    //    $("#IsConditionApply").val(isPrivacyTerms);
+    //    if ($("#IsConditionApply").val() == "true") {
+    //        $("#termsAndConditions").hide();
+    //    } else {
+    //        $("#termsAndConditions").show();
+    //        return false;
+    //    }
+    //}
+    function isPrivacyTerms() {
+        var isPrivacyTerms = $('#IsConditionApply').is(":checked");
+        $("#IsConditionApply").val(isPrivacyTerms);
+    }
+
+    function CheckValidPostCode() {
+        var postCode = $("#PostCode").val();
+        if (postCode == "") {
+            $("#isPostCodeValid").remove();
+        }
+        $.ajax({
+            url: '@Url.Action("CheckValidPostCode", "Vehicle")',
+            async: false,
+            type: 'POST',
+            data: { 'postCode': postCode },
+            success: function (data) {
+                if (data != false) {
+                    $("#BranchId").val(data);
+                    $("#isPostCodeValid").remove();
+                }
+                else { $("#isPostCodeValid").show(); }
+            }
+        });
+    }
+    $("#VehicleMakeName").change(function () {
+        var vehicleMake = $("#VehicleMakeName").val();
+         $.ajax({
+             url: '@Url.Action("GetVehicleModelList", "Vehicle")',
+             async: false,
+             type: 'POST',
+             data: { 'MakeName': vehicleMake },
+             success: function (data) {
+                 $("#VehicleModelId").html("");
+                     $.each(data, function (i, data) {
+                         $("#VehicleModelId").append('<option value="' + data.ModelName + '">' +
+                             data.ModelName + '</option>');
+                     });
+                     $("#VehicleModelId").niceSelect('update');
+                 }
+                })
+    })
+    $("#ToCountryCode").change(function () {
+        OnToCountryCodeChange();
+    })
+
+    function OnToCountryCodeChange() {
+        var countryId = $("#ToCountryCode").val();
+        //if (countryId == "") { countryId =0 }
+         $.ajax({
+             url: '@Url.Action("GetCityListByCountryId", "Vehicle")',
+             async: false,
+             type: 'POST',
+             data: { 'countryCode': countryId },
+             success: function (data) {
+                 $("#MovingToCityId").html("");
+                     $.each(data, function (i, data) {
+                         $("#MovingToCityId").append('<option value="' + data.CityName + '">' +
+                             data.CityName + '</option>');
+                     });
+                     $("#MovingToCityId").niceSelect('update');
+             },
+                })
+    }
+
+    function isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            //if (charCode != 40 && charCode != 41) {
+                return false;
+            //}
+        return true;
+    }
+
+</script>   

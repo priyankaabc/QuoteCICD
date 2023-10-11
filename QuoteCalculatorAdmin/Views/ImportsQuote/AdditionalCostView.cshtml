@@ -1,0 +1,144 @@
+﻿@model  QuoteCalculator.Service.Models.AddtionalCostModel
+
+@{
+    Layout = null;
+}
+<style>
+    .txtTypeCost {
+        width: 100% !important;
+        padding-left: 25px;
+        border: 1px solid;
+        border-radius: .25rem;
+    }
+
+    .font-size15 {
+        font-size: 15px;
+    }
+
+    .input-fix-pound {
+        width: 145px;
+        flex: 0 0 auto;
+        position: relative;
+    }
+
+    .fix-icon {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translate(0, -50%);
+    }
+
+    #gridAddtionalCost {
+        width: 98%;
+    }
+</style>
+@Html.HiddenFor(m => m.DestId)
+<div class="col-md-12">
+    <table id="tblAdditionalCost" class="table table-freezed-column table-striped display nowrap" width="100%">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Cost</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+<div class="col-md-12 pt-3 text-right w-100">
+    <input type="button" value="Save" class="btn btn-warning" onclick="SaveQuoteAdditionalCost();" title="Save" />
+    <input type="button" value="Cancel" class="btn btn-cancel" onclick="$('#AdditionalCostPopup').modal('hide');" title="Cancel" />
+</div>
+
+<script type="text/javascript">
+    var AddCostTable = $('#tblAdditionalCost').DataTable();
+    $(document).ready(function () {
+        GetAddCostGridData();
+    });
+
+    function GetAddCostGridData() {
+        if ($('#DestId').val() > 0) {
+            $.ajax({
+                url: encodeURI('@Url.Action("GetAdditionalCostByDestId", "ImportsQuote")'),
+                type: "GET",
+                data: {
+                    DestId: $('#DestId').val()
+                },
+                dataType: "json",
+                success: BindAddCostGrid
+            });
+        }
+    }
+
+    function BindAddCostGrid(data) {
+        try {
+            if (AddCostTable != 'undefined') {
+                AddCostTable.destroy();
+            }
+            AddCostTable = $('#tblAdditionalCost').DataTable({
+                colReorder: {
+                    enable: false
+                },
+                "lengthMenu": [5, 10, 25, 50, 100],
+                "pageLength": 5,
+                "order": [],
+                "bFilter": true,
+                "aaData": data.Data,
+                "aoColumns": [
+                    {
+                        "mData": "Type",
+                        "className": "text-left type-text"
+                    },
+                    {
+                        "mData": "Cost",
+                        "className": "text-left",
+                        "render": function (data, type, row, meta) {
+                            const input = `<div class="input-fix-pound"><span class="fix-icon">£</span><input type="number" onkeydown = "return ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', '.'].includes(event.key) || !isNaN(Number(event.key));" class="form-control txtTypeCost" min="0" value="` + row.Cost + `"/></div>`;
+                            return input;
+                        }
+                    }
+                ]
+            });
+            $(".dataTables_length").css('clear', 'none');
+            $(".dataTables_length").css('margin-right', '20px');
+            $(".dataTables_info").css('clear', 'none');
+            $(".dataTables_info").css('padding', '0');
+        } catch (e) {
+            console.error(e.message);
+        }
+    }
+
+    function SaveQuoteAdditionalCost() {
+        let AdditionalCost = [];
+        let rows = $("#tblAdditionalCost").dataTable().fnGetNodes();
+        for (let i = 0; i < rows.length; i++) {
+            const CostValue = $(rows[i]).find('input.form-control').val();
+            const Type = $(rows[i]).find('.type-text').text();
+            AdditionalCost.push({
+                Type: Type,
+                Cost: CostValue
+            });
+        }
+        if (AdditionalCost.length > 0) {
+            const JsonAddCost = JSON.stringify(AdditionalCost);
+            $.ajax({
+                url: '@Url.Action("SaveQuoteAddCost", "ImportsQuote")',
+                async: false,
+                type: 'POST',
+                data: { strData: JsonAddCost, DestinationId: $('#DestId').val()},
+                success: function (data) {
+                    if (data.IsSuccess) {
+                        BindConsigneeDetails();
+                        toastr.success(data.Message);
+                        $('#AdditionalCostPopup').modal('hide');
+                    }
+                    else {
+                        toastr.error("Something went wrong!")
+                    }
+                }
+            });
+        }
+        else {
+            toastr.error('No records to save!');
+        }
+    }
+</script>
+

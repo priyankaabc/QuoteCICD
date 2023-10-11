@@ -1,0 +1,31 @@
+﻿@model List<SP_GetQuoteContents_Result>
+
+<section class="blue-bg-05">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-10">
+                <div class="row">
+                    <div class="move-journey" id="quoteAndTermsAccordian" style="width: 100%;">
+                        <div class="row">
+                            @foreach (var item in Model)
+                            {
+                                <div class="col-12">
+                                    <h2 class="mb-0" id="heading_@item.HeadingContentId">
+                                        <button type="button" class="btn pl-0 text-capitalize collapsed" data-toggle="collapse" data-target="#collapse_@item.HeadingContentId">@item.Heading<i class="bx bx-plus"></i></button>
+                                    </h2>
+                                    <div id="collapse_@item.HeadingContentId" class="collapse" aria-labelledby="heading_@item.HeadingContentId" data-parent="#quoteAndTermsAccordian">
+                                        <div class="card-body px-0">
+                                            <span class="customli">
+                                                @Html.Raw(item.HeadingContent)
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

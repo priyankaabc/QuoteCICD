@@ -1,0 +1,123 @@
+﻿@using QuoteCalculatorAdmin.Models
+@{
+    ViewBag.Title = "Quote Imports";
+}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Quote Imports</h5>
+        <a class="btn btn-warning" href="@Url.Action("AddEdit", "ImportsQuote")?id=0&op=add"><i class="icon-plus2"></i> Add Imports</a>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <table id="tblImportsQuote" class="table dataTable  nowrap" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Customer/Agent</th>
+                            <th>Country</th>
+                            <th>POE</th>
+                            <th>Branch</th>
+                            <th>Service</th>
+                            <th>Container</th>
+                            <th>Reference No</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var DataTable = $('#tblImportsQuote').DataTable();
+    $(document).ready(function () {
+        $("#menu_ImportsQuote").addClass("active");
+
+        BindImportsQuoteGrid();
+    });
+
+    function BindImportsQuoteGrid() {
+        try {
+            if (DataTable != 'undefined') {
+                DataTable.destroy();
+            }
+            DataTable = $('#tblImportsQuote').DataTable({
+                colReorder: {
+                    enable: false
+                },
+                serverSide: true,
+                language: {
+                    'processing': '<div class="loader"></div>'
+                },
+                ajax: {
+                    url: encodeURI('@Url.Action("GetImportsQuoteList", "ImportsQuote")'),
+                    type: 'POST',
+                    //data: function (d) {
+                    //    d.ImportQuoteId = 10;
+                    //}
+                },
+                "lengthMenu": [10,20, 50, 100, 200, 500],
+                "pageLength": 10,
+                "order": [],
+                //dom: 'Blfrtip',
+                "bFilter": true,
+                //"aaData": data.Data,
+                "aoColumns": [
+                    {
+                        "mData": "Type",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "CustomerName",
+                        "className": "text-left "
+                    },
+                    {
+                        "mData": "OriginCountry",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "POE",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "Branch",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "StrService",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "StrContainerSize",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "RefNo",
+                        "className": "text-left"
+                    },
+                    {
+                        "mData": "Id",
+                        "bSortable": false,
+                        "className": "dt-center",
+                        "render": function (data, type, row, meta) {
+                            let ActionButtonEdit = '';
+                            if ('@AuthorizationHelper.CanEdit(ViewContext.RouteData.Values["Controller"].ToString())' == 'True') {
+                                ActionButtonEdit = '<a title="Edit" href="@Url.Action("AddEdit", "ImportsQuote")?Id=' + row.Id + '&op=edit" class="btn edit-icon" ><i class="fa-regular fa-pen-to-square"></i></a>';
+                            }
+                            return ActionButtonEdit;
+                        }
+                    }
+                ]
+            });
+            $(".dataTables_length").css('clear', 'none');
+            $(".dataTables_length").css('margin-right', '20px');
+            $(".dataTables_info").css('clear', 'none');
+            $(".dataTables_info").css('padding', '0');
+        } catch (e) {
+            alert(e.message);
+        }
+    }
+</script>

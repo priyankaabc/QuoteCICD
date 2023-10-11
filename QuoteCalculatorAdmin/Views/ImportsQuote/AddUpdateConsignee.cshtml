@@ -1,0 +1,137 @@
+﻿
+@using QuoteCalculator.Service.Models
+@model QuoteCalculator.Service.Models.DestinationDetails
+@{
+    Layout = null;
+}
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+@using (Html.BeginForm("DestinationDetailsUpdate", "ImportsQuote", FormMethod.Post, new { @class = "custom-inputs", @Id = "AssigneeForm" }))
+{
+    @Html.HiddenFor(x => x.Id, new { @id = "AssigneeId" })
+    <div class="row">
+        <div class="col-lg-4 col-12 form-group">
+            <label>Consignee Name</label>
+            @Html.TextBoxFor(m => m.ConsigneeName, new { @class = "form-control", @autocomplete = "off", @Name = "ConsigneeName" })
+            <span class="field-validation-valid text-danger" data-valmsg-for="ConsigneeName" data-valmsg-replace="true"></span>
+        </div>
+        <div class="col-lg-4 col-12 form-group">
+            <label>Volume/Kgs</label>
+            @Html.TextBoxFor(m => m.Kgs, new { @class = "form-control", @autocomplete = "off", @Name = "Kgs" })
+            <span class="field-validation-valid text-danger" data-valmsg-for="Kgs" data-valmsg-replace="true"></span>
+        </div>
+        <div class="col-lg-4 col-12 form-group">
+            <label>Consignment</label>
+            @Html.DropDownListFor(m => m.VehicleId, new SelectList((IEnumerable<CommonModel>)ViewBag.ConsignmentList, "Value", "Text"), new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4 col-12 form-group">
+            <label>Dest Address 1</label>
+            @Html.TextBoxFor(m => m.DestAddress1, new { @class = "form-control", @autocomplete = "off" })
+        </div>
+        <div class="col-lg-4 col-12 form-group">
+            <label>Dest Address 2</label>
+            @Html.TextBoxFor(m => m.DestAddress2, new { @class = "form-control", @autocomplete = "off" })
+        </div>
+        <div class="col-lg-4 col-12 form-group">
+            <label>Dest Postcode</label>
+            @Html.TextBoxFor(m => m.DestPostcode, new { @class = "form-control", @autocomplete = "off", @onchange = "PostCodeChange()" })
+            <span class="field-validation-valid text-danger" id="model_ToPostCode_error"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4 col-12 form-group">
+            <label>Additional Cost</label>
+            @*<span>@Model.AdditionalCost</span>*@
+            @Html.TextBoxFor(m => m.AdditionalCost, new { @class = "form-control", @autocomplete = "off", @readonly = "readonly" })
+        </div>
+        <div class="col-lg-4 col-12 form-group">
+            <label>Is Collect From Branch?</label>
+            <label class="custom-checkbox ml-0">
+                @Html.CheckBoxFor(m => m.IsCollectFromBranch, new { @class = "d-block mt-2", @onchange = "CollectFromBranchChange()" })
+                <span class="checkmark"></span>
+            </label>
+
+        </div>
+    </div>
+    <div class="row text-right">
+        <div class="col-md-12">
+            <button type="button" class="btn btn-warning mr-2" onclick="SaveAssigneeDetails();">Save</button>
+            <button type="button" onclick="CancelClick();" class="btn btn-cancel">Cancel</button>
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        CollectFromBranchChange();
+    });
+    function PostCodeChange() {
+        const branchValue = $('#IsCollectFromBranch').is(":checked");
+        if (!branchValue) {
+            const PostCode = $('#DestPostcode').val();
+            if (PostCode && PostCode.trim() != '') {
+                const IsValidPostCode = CheckValidPostCode(PostCode);
+                if (IsValidPostCode) {
+                    $('#model_ToPostCode_error').text('');
+                }
+                else {
+                    $('#model_ToPostCode_error').text('Please enter valid post code.');
+                }
+            }
+        }
+    }
+
+    function SaveAssigneeDetails() {
+        const form = $('#AssigneeForm');
+        const ImportQuoteId= $("#Id").val();
+        const StrvehicleId= $("#VehicleId").val();
+        if (form.valid()) {
+            if ($('#model_ToPostCode_error').text()) {
+                return false;
+            }
+            else {
+                const branchValue = $('#IsCollectFromBranch').is(":checked");
+                const PostCode = $('#DestPostcode').val();
+                const IsValidPostCode = !branchValue ? CheckValidPostCode(PostCode) : true;
+                if (IsValidPostCode) {
+                    $.ajax({
+                        url: '@Url.Action("DestinationDetailsUpdate", "ImportsQuote")?ImportQuoteId=' + ImportQuoteId + '&StrvehicleId=' + StrvehicleId,
+                        async: false,
+                        type: 'POST',
+                        data: form.serializeArray(),
+                        success: function (data) {
+                            if (data && data.Success) {
+                                toastr.success(data.Message);
+                                BindConsigneeDetails();
+                                CancelClick();
+                            }
+                            else {
+                                toastr.error(data.Message);
+                            }
+                        }
+                    });
+                }
+                else {
+                    $('#model_ToPostCode_error').text('Please enter valid post code.');
+                }
+            }
+        }
+    }
+
+    function CancelClick() {
+        $("#AssigneeDetailsPopup").modal('hide');
+    }
+
+    function CollectFromBranchChange() {
+        const branchValue = $('#IsCollectFromBranch').is(":checked");
+        if (branchValue) {
+            $("#DestAddress1, #DestAddress2, #DestPostcode").val('').attr("disabled", "disabled");
+            $('#model_ToPostCode_error').text('');
+        }
+        else {
+            $("#DestAddress1, #DestAddress2, #DestPostcode").attr("disabled", false);
+        }
+    }
+</script>

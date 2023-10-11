@@ -1,0 +1,533 @@
+﻿@using QuoteCalculatorAdmin.Common
+
+<!DOCTYPE html>
+<html  lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Quote Calculator</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+
+
+    <!--Theme css-->
+    <link href="~/Content/new-theme/css/sb-admin-2.css" rel="stylesheet" />
+    @Styles.Render("~/content/NewUI_Style")
+    <link href="~/Content/new-theme/css/common-custom.css" rel="stylesheet" />
+
+
+
+    @if (SessionHelper.CompanyId == 1)
+    {
+        <link href="~/Content/new-theme/css/anglo-custom.css" rel="stylesheet" />
+    }
+    else if (SessionHelper.CompanyId == 2)
+    {
+        <link href="~/Content/new-theme/css/pickford-custom.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="~/Content/new-theme/css/excess-custom.css" rel="stylesheet" />
+    }
+    @*<link href="~/Content/new-theme/css/custom.css" rel="stylesheet" />*@
+    <!-- Bootstrap core JavaScript-->
+    <script src="~/Content/new-theme/vendor/jquery/jquery.min.js"></script>
+
+    @Scripts.Render("~/Scripts/JQueryScripts")
+
+    @Scripts.Render("~/Scripts/NewUI_Scripts")
+    <script src='@String.Format("{0}?v={1}",Url.Content("~/Content/datatable/jquery.dataTables.min.js"),DateTime.Now.Ticks)' type='text/javascript'></script>
+    <script src='@String.Format("{0}?v={1}",Url.Content("~/Content/datatable/dataTables.bootstrap4.min.js"),DateTime.Now.Ticks)' type='text/javascript'></script>
+    <script src='@String.Format("{0}?v={1}",Url.Content("~/Content/datatable/dataTables.responsive.min.js"),DateTime.Now.Ticks)' type='text/javascript'></script>
+    <script src='@String.Format("{0}?v={1}",Url.Content("~/Content/datatable/responsive.bootstrap4.min.js"),DateTime.Now.Ticks)' type='text/javascript'></script>
+    <script src='@String.Format("{0}?v={1}",Url.Content("~/Scripts/bootbox.min.js"),DateTime.Now.Ticks)' type='text/javascript'></script>
+    <script src="~/Scripts/toastr.min.js"></script>
+
+    <link href='@String.Format("{0}?v={1}",Url.Content("~/Content/datatable/dataTables.bootstrap4.min.css"),DateTime.Now.Ticks)' rel="stylesheet" />
+    <link href='@String.Format("{0}?v={1}",Url.Content("~/Content/datatable/responsive.bootstrap4.min.css"),DateTime.Now.Ticks)' rel="stylesheet" />
+    <link href="~/Content/css/toastr.min.css" rel="stylesheet" />
+
+    @*<script src="~/Content/new-theme/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>*@
+
+    <!--Material Icons-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+
+    <style>
+        .datatable-btn {
+            border-radius: 4px;
+            border-color: #e36b0a;
+            color: #fff;
+            background-color: #e36b0a;
+            background-position: 50% 50%;
+        }
+
+            .datatable-btn:hover {
+                color: #fff !important;
+            }
+
+        .custom-d-none {
+            display: none;
+        }
+
+        label.error {
+            color: #dc3545;
+        }
+
+        .custom-color {
+            color: #254899;
+        }
+
+        .main-loader {
+            position: fixed;
+           // display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: rgba(255,255,255,0.4);
+            display: none;
+        }
+
+        button.not-allowed {
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body id="page-top">
+    <div class="main-loader">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        @Html.Partial("_Menu")
+        <!-- End of Sidebar -->
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                @Html.Partial("_Header")
+                <!-- End of Topbar -->
+                <!-- Begin Page Content -->
+                <div class="container-fluid p-lg-4 p-3 pb-100">
+                    @RenderBody()
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container-fluid">
+                    <div class="copyright">
+                        <span> © @DateTime.Now.Year. <a href="https://www.digitalinspired.io/" target="_blank">Digital Inspired.</a> All Rights Reserved.</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-cancel" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-warning" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*@Html.Partial("_Header")
+        @Html.Partial("_Menu")*@
+
+    <!-- Core plugin JavaScript-->
+    <script src="~/Content/new-theme/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="~/Content/new-theme/js/sb-admin-2.min.js"></script>
+
+</body>
+</html>
+<script type="text/javascript">
+    var pathArray = '@HtmlHelperExtensions.SiteRootPathUrl' + '/';
+    var controllerName = '@ViewContext.RouteData.Values["Controller"].ToString()';
+    $(document).ready(function () {
+        //kendo.culture("en-IN");
+        //setActiveMenulink();
+        //console.log(@SessionHelper.UserId);
+            /* custom select option */
+            //$(".custom-inputs .custom-selection").niceSelect();
+            //$(".date").datepicker({
+            //    autoclose: true,
+            //    todayHighlight: true,
+            //    format: 'dd-mm-yyyy'
+            //}).datepicker('update');
+
+        let errormessage = '@TempData[CustomEnums.NotifyType.Error.GetDescription()]';
+        let successmessage = '@TempData[CustomEnums.NotifyType.Success.GetDescription()]';
+        if (errormessage !== "") {
+            //ShowErrorMessage(errormessage);
+            toastr.error(errormessage);
+        }
+
+        if (successmessage !== "") {
+            //SucessMessage(successmessage);
+            toastr.success(successmessage);
+        }
+    });
+
+    function ShowErrorMessage(msg) {
+        var pNotify = new PNotify({
+            text: msg,
+            type: 'error'
+        });
+    }
+
+    function SucessMessage(msg) {
+        var pNotify = new PNotify({
+            text: msg,
+            type: 'success'
+        });
+    }
+    function LoadQuoteDetails() {
+        $.ajax({
+            url: '@Url.Action("QuoteDetails", "Common")',
+            type: 'GET',
+            cache: false,
+            contentType: 'text/html',
+            data: {
+                fromCountryCode: '@SessionHelper.FromCountryCode',
+                countryCode: '@SessionHelper.ToCountryCode',
+                quoteType: '@SessionHelper.QuoteType'
+            }
+        }).done(function (result) {
+            $('#QuoteDetails').html(result);
+        });
+    }
+
+    $(document).ajaxSuccess(function (event, request, settings) {
+        if (request && request.responseJSON && request.responseJSON.status == "401") {
+            window.location.href = '/Login/Index';
+        }
+    });
+
+    function CheckValidPostCode(PostCodeValue) {
+        let IsValid = false;
+        $.ajax({
+            url: '@Url.Action("CheckValidPostCode", "Baggage")',
+            async: false,
+            type: 'POST',
+            data: { 'postCode': PostCodeValue },
+            success: function (data) {
+                IsValid = data != false ? true : false;
+            }
+        });
+        return IsValid;
+    }
+
+    function addCommas(nStr) {
+        nStr += '';
+        var x = nStr.split('.');
+        var x1 = x[0];
+        var x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{3})/;
+        while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + ',' + '$2');
+        }
+        return x1 + x2;
+    }
+
+    function ValidateNumberOnly(event) {        
+        const charCode = (event.which) ? event.which : event.keyCode;
+        //if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        if ((charCode >= 48 && charCode <= 57) || (charCode >= 96 && charCode <= 105)) { // 0 - 9 Keys Only
+            return true;
+        }
+        return false;
+    }
+
+    // Add Loader
+    $(document).ajaxSend(function (evt, request, settings) {
+        $('.main-loader').css('display', 'flex');
+    });
+
+    $(document).ajaxStop(function () {
+        $('.main-loader').css('display', 'none');
+    });
+
+    $('form').submit(function (e) {
+        if ($(this).valid()) {
+            $('.main-loader').css('display', 'flex');
+        }        
+    });
+
+    function hideLoader() {
+        $('.main-loader').css('display', 'none');
+    }
+</script>
+@*@using QuoteCalculatorAdmin.Common*@
+
+<!--<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />-->
+@*<link href="~/fevicon.ico" rel="shortcut icon" type="image/x-icon" />*@
+<!--<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<title>Quote Calculator</title>
+
+<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">-->
+@*@Styles.Render("~/Content/ui")*@
+@*@Styles.Render("~/content/NewUI_Style")*@
+
+@*@Styles.Render("~/Content/kendo")*@
+<!--<script src="https://code.jquery.com/jquery-3.5.1.js"></script>-->
+@*@Scripts.Render("~/Scripts/HeaderNewJQuery")*@
+
+@*@Scripts.Render("~/Scripts/HeaderJQuery")*@
+
+@*@if (SessionHelper.CompanyId == 1)
+    {
+        @Styles.Render("~/Content/kendo")
+        <link href="~/Content/css/core.css" rel="stylesheet" />
+    }
+    else if (SessionHelper.CompanyId == 2)
+    {
+        @Styles.Render("~/Content/kendo_pf")
+        <link href="~/Content/css/pf_core.css" rel="stylesheet" />
+    }
+    else if (SessionHelper.CompanyId == 3)
+    {
+        @Styles.Render("~/Content/kendo_ei")
+        <link href="~/Content/css/ei_core.css" rel="stylesheet" />
+    }*@
+
+@*@Scripts.Render("~/Scripts/JQueryScripts")*@
+<!--<script>
+        $(document).ready(function () {
+            //console.log(@SessionHelper.UserId);
+            /* custom select option */
+            //$(".custom-inputs .custom-selection").niceSelect();
+        });
+
+        function addCommas(nStr) {
+            nStr += '';
+            var x = nStr.split('.');
+            var x1 = x[0];
+            var x2 = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(x1)) {
+                x1 = x1.replace(rgx, '$1' + ',' + '$2');
+            }
+            return x1 + x2;
+        }
+
+
+    </script>
+    <style>
+
+        .statusDeactive {
+            background: #f00;
+            color: #fff;
+            padding: 1px 5px 3px;
+            border-radius: 3px;
+        }
+
+        .statusActive {
+            background: #195e5a;
+            color: #fff;
+            padding: 1px 5px 3px;
+            border-radius: 3px;
+        }
+
+        .statusPending {
+            background: #97BF7A;
+            color: #fff;
+            padding: 1px 5px 3px;
+            border-radius: 3px;
+        }
+
+        .font-15 {
+            font-size: 15px;
+        }
+
+        /*  .pagination > .active > a {
+                        background: #2c4174 !important;
+                    }
+
+                        .pagination > .active > a :hover {
+                            background: #2c4174 !important;
+                        }
+
+                    thead {
+                        background: #2c4174 !important;
+                        color: white !important;
+                    }
+
+                    .font-15 {
+                        font-size: 15px;
+                    }
+
+                    .pagination > .active > a {
+                        background: #2c4174 !important;
+                    }
+
+                        .pagination > .active > a :hover {
+                            background: #2c4174 !important;
+                        }
+            */
+        /* .form-control {
+                        display: block !important;
+                        width: 100% !important;
+                        height: 38px !important;
+                        padding: 8px 16px !important;
+                        font-size: 13px !important;
+                        line-height: 1.5384616 !important;
+                        color: #333 !important;
+                        background-color: transparent !important;
+                        background-image: none !important;
+                        border: 1px solid #ddd !important;
+                        border-radius: 3px !important;
+                        -webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+                        box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+                        -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+                        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+                        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+                    }
+            */
+        /*  .form-control:focus {
+                            border-color: #009688 !important;
+                            box-shadow: none !important;
+                        }
+
+                    select.form-control.input-sm {
+                        display: inline-block !important;
+                        width: auto !important;
+                        vertical-align: middle;
+                        margin: 10px;
+                    }
+
+                    .btn-edit {
+                        color: black;
+                        margin-right: 10px;
+                    }
+
+                    .btn-delete {
+                        color: red;
+                        margin-right: 10px;
+                    }*/
+
+        a:hover, a:focus {
+            color: black !important;
+        }
+    </style>
+    <link href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.datatables.net/responsive/2.3.0/css/responsive.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+
+</head>
+<body>-->
+@*@Html.Partial("_Header")
+    @Html.Partial("_Menu")*@
+
+
+
+<!--<div class="container-fluid mt-3">-->
+@*@RenderBody()*@
+<!--</div>
+
+<footer class="footer text-center custom-bg p-3 mt-3">
+    <p class="mb-0 text-white"> © @DateTime.Now.Year. <a href="https://www.digitalinspired.io/" class="text-white" target="_blank">Digital Inspired.</a> All Rights Reserved.</p>
+</footer>-->
+@*@Scripts.Render("~/Scripts/UIScripts")*@
+
+<!--<script>
+ var pathArray = '@HtmlHelperExtensions.SiteRootPathUrl' + '/';
+
+var controllerName = '@ViewContext.RouteData.Values["Controller"].ToString()';
+
+$(document).ready(function () {
+    kendo.culture("en-IN");
+    setActiveMenulink();
+
+    var errormessage = '@TempData[CustomEnums.NotifyType.Error.GetDescription()]';
+    var successmessage = '@TempData[CustomEnums.NotifyType.Success.GetDescription()]';
+    if (errormessage !== "") {
+        ShowErrorMessage(errormessage);
+    }
+
+    if (successmessage !== "") {
+        SucessMessage(successmessage);
+    }
+});
+
+function ShowErrorMessage(msg) {
+    var pNotify = new PNotify({
+        text: msg,
+        type: 'error'
+    });
+}
+
+function SucessMessage(msg) {
+    var pNotify = new PNotify({
+        text: msg,
+        type: 'success'
+    });
+}
+function LoadQuoteDetails(quoteType) {
+    $.ajax({
+        url: '@Url.Action("QuoteDetails", "Common")',
+        type: 'GET',
+        cache: false,
+        contentType: 'text/html',
+        data: {
+            fromCountryCode:'@SessionHelper.FromCountryCode',
+            countryCode: '@SessionHelper.ToCountryCode',
+            quoteType: '@SessionHelper.QuoteType'
+        }
+    }).done(function (result) {
+        $('#QuoteDetails').html(result);
+    });
+}
+
+$(document).ajaxSuccess(function (event, request, settings) {
+    if (request && request.responseJSON && request.responseJSON.status == "401") {
+        window.location.href = '/Login/Index';
+    }
+ });
+</script>-->
+@*@Scripts.Render("~/Scripts/NewUI_Scripts")*@
+@*<script src="https://code.jquery.com/jquery-3.5.1.js"></script>*@
+@*<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.3.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.3.0/js/responsive.bootstrap4.min.js"></script>*@
+
+
+<!--</body>
+</html>-->

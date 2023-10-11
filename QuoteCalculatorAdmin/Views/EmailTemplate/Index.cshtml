@@ -1,0 +1,273 @@
+﻿@using QuoteCalculator.Service.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml"; ;
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="card-title mb-0">Email Template Service</h5>
+
+        <a href="/EmailTemplate/ManageTemplates?templateId=0" class="btn btn-warning"><i class="icon-plus2"></i> Add Email Template</a>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="table-responsive">
+                    <table id="tblemailtemplateList" class="table dataTable nowrap" width="100%">
+                        <thead>
+                            <tr>
+                                <th scope="col">Service</th>
+                                <th scope="col">Subject</th>
+                                <th scope="col">Html Content</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/Pages/EmailTemplate.js"></script>
+@*@using QuoteCalculatorAdmin.Data
+    @using QuoteCalculatorAdmin.Common
+    @using Kendo.Mvc.UI
+
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-white">
+                <div class="panel-heading">
+                    <h5 class="panel-title">Email Template</h5>
+                </div>
+                <div class="panel-body">
+
+                    @*<table id="tblEmailTemplateList" class="table table-bordered table-striped" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Service</th>
+                                                    <th scope="col">Subject</th>
+                                                    <th scope="col">Html Content</th>
+                                                    <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+
+                                        @(Html.Kendo().Grid<tbl_EmailTemplate>()
+                                          .Name("gridEmailTemplate")
+                                          .Columns(columns =>
+                                          {
+                                              if (AuthorizationHelper.CanEditDelete(ViewContext.RouteData.Values["Controller"].ToString()))
+                                              {
+                                                  columns.Command(command =>
+                                                  {
+
+                                                      if (AuthorizationHelper.CanDelete(ViewContext.RouteData.Values["Controller"].ToString()))
+                                                      {
+                                                          command.Destroy().Text(" ");
+                                                      }
+                                                      if (AuthorizationHelper.CanEdit(ViewContext.RouteData.Values["Controller"].ToString()))
+                                                      {
+                                                          command.Custom("Edit").Text("<span class='k-icon k-i-pencil'></span> ").Click("OnEdit");
+                                                      }
+
+
+                                                  }).Title("Action").Width(20).HtmlAttributes(CommonHelper.CenterColumnStyle);
+                                              }
+                                              columns.ForeignKey(p => p.ServiceId, (System.Collections.IEnumerable)ViewBag.ServiceList, "Id", "Name").Title("Service").Width(100);
+                                              columns.Bound(m => m.Subject).Title("Subject").Width(50);
+                                              columns.Bound(m => m.HtmlContent).ClientTemplate("#:getTheSubstring(data.HtmlContent,50)#").Title("Html Content").Width(100);
+
+                                          })
+                                          .ToolBar(toolbar =>
+                                          {
+                                              if (AuthorizationHelper.CanAdd(ViewContext.RouteData.Values["Controller"].ToString()))
+                                              {
+                                                  toolbar.Custom().Text("Add Email Template").Action("AddEdit", "EmailTemplate");
+                                              }
+
+                                          })
+                                          .Editable(editable =>
+                                          {
+                                              editable.Mode(GridEditMode.PopUp);
+                                              editable.DisplayDeleteConfirmation("Are you sure you want to delete template?");
+
+                                          })
+                                          .Pageable(x =>
+                                          {
+                                              x.Refresh(true);
+                                              x.PageSizes(CommonHelper.PageSizes);
+                                          })
+                                           .NoRecords()
+                                          .DataSource(dataSource => dataSource
+                                          .Ajax()
+                                          .ServerOperation(true)
+                                          .PageSize(CommonHelper.PazeSize)
+                                          .Model(model => model.Id(d => d.Id))
+                                          .Events(events => events.Error("onError(\"gridEmailTemplate\")"))
+                                          .Read(read => read.Action("Read", "EmailTemplate"))//.Data("filter"))
+                                          .Destroy(update => update.Action("Destroy", "EmailTemplate"))
+                                          ))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+
+                            function OnEdit(e) {
+                            e.preventDefault();
+                            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                            window.location.href = "@Url.Action("AddEdit", "EmailTemplate")?id=" + dataItem.Id;
+                            }
+
+                            function getTheSubstring(value, length) {
+                                if (value.length > length)
+                                    return kendo.toString(value.substring(0, length)) + "...";
+                                else return kendo.toString(value);
+                            }
+
+                            $(document).ready(function () {
+                                bindData();
+                            });
+
+                            function bindData() {
+                                try {
+
+                                    var dtuserList = $('#tblEmailTemplateList').DataTable();
+                                      if (dtuserList != 'undefined') {
+                                          dtuserList.destroy();
+                                        }
+
+
+                                    dtuserList = $('#tblEmailTemplateList').DataTable({
+                                        "order": [0, 'desc'],
+                                        "dom": 'frtlip',
+                                        "iDisplayLength": 10,
+                                        "bFilter": true,
+                                        "proccessing": true,
+                                        "serverSide": true,
+                                        "ajax": {
+                                            "url": encodeURI('@Url.Action("GetEmailtemplateList", "EmailTemplate")'),
+                                            "type": "POST",
+                                            "dataType": "JSON"
+                                        },
+                                        "aoColumns": [
+
+                                            {
+                                                "mData": "ServiceName",
+                                                "className": "text-left"
+                                            },
+                                            {
+                                                "mData": "Subject",
+                                                "className": "text-left"
+                                            },
+                                            {
+                                                "mData": "HtmlContent",
+                                                "className": "text-left",
+                                                "render": function (data, type, row, meta) {
+                                                    return getTheSubstring(data, 50).toString();
+                                                }
+                                            },
+                                           {
+                                               "mData": "Id",
+                                                "className": "text-center",
+                                                "render": function (data, type, row, meta) {
+                                                    var ActionButtonEdit = '<a href="@Url.Action("AddEdit", "EmailTemplate")?id='+row.id+'" title="Edit"><i class="fa fa-pencil text-primary font-15"></i></a>';
+                                                    var ActionButtonDelete = '<a href="javascript:void(0)" onclick="deleteTemplate(' + row.id +')" title="Delete"><i class="fa fa-trash text-primary font-15"></i></a>';
+                                                    var result = '';
+                                                    result = result + ActionButtonEdit;
+                                                    result = result +'&nbsp;&nbsp;&nbsp;'+ ActionButtonDelete;
+                                                    return result;
+                                                }
+                                            }
+
+                                        ],
+                                        "initComplete": function () {
+
+                                            var dataTable = $('#tblEmailTemplateList').DataTable();
+                                            $('[data-toggle="tooltip"]').tooltip();
+
+                                        },
+                                        "fnDrawCallback": function () {
+
+                                        },
+                                        "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+                                            if (aData.RoleId == 0) {
+                                                $('td', nRow).css('background-color', '#FFA500');
+                                                $('td', nRow).css('color', '#ffffff ');
+                                            }
+                                        }
+                                    });
+
+                                    $(".dataTables_length").css('clear', 'none');
+                                    $(".dataTables_length").css('margin-right', '20px');
+                                    $(".dataTables_info").css('clear', 'none');
+                                    $(".dataTables_info").css('padding', '0');
+                                } catch (e) {
+                                    alert(e.message);
+                                }
+                            }
+
+                            function deleteTemplate(EmailTemplateId) {
+                                bootbox.confirm("Are you sure you want to delete template?", function (result) {
+                                    if (result) {
+                                        $.ajax({
+                                            url: '@Url.Action("Destroy", "UserMaster")',
+                                            async: false,
+                                            type: 'POST',
+                                            data: { id: Number(EmailTemplateId) },
+                                            success: function (data) {
+                                                BindUserList();
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        </script>
+
+                        <style>
+                            thead {
+                                background: #2c4174 !important;
+                                color: white !important;
+                            }
+
+                            .font-15 {
+                                font-size: 15px;
+                            }
+
+                            .pagination > .active > a {
+                                background: #2c4174 !important;
+                            }
+
+                                .pagination > .active > a :hover {
+                                    background: #2c4174 !important;
+                                }
+
+                            .form-control {
+                                display: block !important;
+                                width: 100% !important;
+                                height: 38px !important;
+                                padding: 8px 16px !important;
+                                font-size: 13px !important;
+                                line-height: 1.5384616 !important;
+                                color: #333 !important;
+                                background-color: transparent !important;
+                                background-image: none !important;
+                                border: 1px solid #ddd !important;
+                                border-radius: 3px !important;
+                                -webkit-box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+                                box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+                                -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+                                -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+                                transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+                            }
+
+                                .form-control:focus {
+                                    border-color: #009688 !important;
+                                    box-shadow: none !important;
+                                }
+                        </style>
+*@
